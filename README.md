@@ -1,2 +1,7 @@
-# topology_tree_max_matching
-Topology Tree Maximium Matching through Tree Preserving Embedding and Hungarian Algorithm.
+# tree_maximum_matching
+Tree Maximum Matching through Tree Preserving Embedding and Hungarian Algorithm.
+
+# Environment preparation
+conda install matplotlib mplcursors numpy
+
+

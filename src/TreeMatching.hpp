@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "TreeNode.hpp"
 
 // similarityType: "cosine" or "euclidean"

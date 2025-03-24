@@ -41,8 +41,8 @@ std::vector<std::vector<T>> generateFeatureVectors(
     std::vector<T> featureVector;
 
     // Append precomputed TPE embedding.
-    featureVector.push_back(node.x);
-    featureVector.push_back(node.y);
+    featureVector.push_back(node.tpeX);
+    featureVector.push_back(node.tpeY);
 
     // Normalize original position using min-max scaling.
     T normPosX = (posXMax - posXMin == 0)
@@ -264,12 +264,12 @@ std::vector<int> matchTrees(std::vector<Node<T>>& treeA,
   return maxMatching.second;
 }
 
-void printMatching(const std::vector<int>& matching, const std::string& treeA,
+void printMatching(const std::vector<int>& matchRes, const std::string& treeA,
                    const std::string& treeB) {
   std::cout << "Maximum matching between " << treeA << " and " << treeB << ":"
             << std::endl;
-  for (int i = 0; i < matching.size(); ++i) {
-    std::cout << "  " << i << " -> " << matching[i] << std::endl;
+  for (int i = 0; i < matchRes.size(); ++i) {
+    std::cout << "  " << i << " -> " << matchRes[i] << std::endl;
   }
 }
 

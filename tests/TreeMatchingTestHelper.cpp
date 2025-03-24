@@ -23,7 +23,7 @@ void assignPositions(std::vector<Node<T>>& nodes, int nodeIdx, T x, T y,
   if (nodeIdx == 0) {
     nodes[nodeIdx].type = 0;
   } else {
-    nodes[nodeIdx].type = (level % 2 == 0) ? 1 : 2;
+    nodes[nodeIdx].type = (level % 2 != 0) ? 1 : 2;
   }
 
   // Retrieve the children of the current node according to the predefined tree
@@ -32,7 +32,7 @@ void assignPositions(std::vector<Node<T>>& nodes, int nodeIdx, T x, T y,
 
   if (!childrenIndices.empty()) {
     // Random distributions to determine child spacing and x offset.
-    std::uniform_real_distribution<T> distChildSpacing(4.0, 8.0);
+    std::uniform_real_distribution<T> distChildSpacing(4.0, 24.0);
     std::uniform_real_distribution<T> distX(5.0, 30.0);
 
     T childSpacing = distChildSpacing(rng);
@@ -60,30 +60,10 @@ void assignPositions(std::vector<Node<T>>& nodes, int nodeIdx, T x, T y,
 
 // Function to generate Topology Tree A.
 template <typename T>
-std::vector<Node<T>> generateTreeA() {
-  const int numNodes = 10;
+std::vector<Node<T>> generateTreeA(
+    const std::vector<std::vector<int>>& treeStructure) {
+  const int numNodes = treeStructure.size();
   std::vector<Node<T>> nodes(numNodes);
-
-  // Define the tree structure.
-  // Note: Using 0-indexing: Node 1 is at index 0.
-  // Structure:
-  //   Node 1 (index 0): children -> nodes 2 and 3 (indices 1 and 2)
-  //   Node 2 (index 1): children -> nodes 4 and 5 (indices 3 and 4)
-  //   Node 3 (index 2): children -> nodes 6 and 7 (indices 5 and 6)
-  //   Node 4 (index 3): child -> node 8 (index 7)
-  //   Node 6 (index 5): children -> nodes 9 and 10 (indices 8 and 9)
-  std::vector<std::vector<int>> treeStructure = {
-      {1, 2},  // Node 1
-      {3, 4},  // Node 2
-      {5, 6},  // Node 3
-      {7},     // Node 4
-      {},      // Node 5
-      {8, 9},  // Node 6
-      {},      // Node 7
-      {},      // Node 8
-      {},      // Node 9
-      {}       // Node 10
-  };
 
   // Initialize a random number generator.
   std::random_device rd;
@@ -165,7 +145,7 @@ template <typename T>
 void printTree(const std::vector<Node<T>>& tree, const std::string& treeName) {
   std::cout << "Tree: " << treeName << std::endl;
   for (size_t i = 0; i < tree.size(); ++i) {
-    std::cout << "  Node " << i + 1 << ": pos=(" << tree[i].posX << ", "
+    std::cout << "  Node " << i << ": pos=(" << tree[i].posX << ", "
               << tree[i].posY << ")"
               << ", offset=" << tree[i].offset << ", angle=" << tree[i].angle
               << ", type=" << tree[i].type
@@ -178,7 +158,8 @@ template void assignPositions<float>(
     std::vector<Node<float>>& nodes, int nodeIdx, float x, float y, int level,
     const std::vector<std::vector<int>>& treeStructure, std::mt19937& rng);
 
-template std::vector<Node<float>> generateTreeA<float>();
+template std::vector<Node<float>> generateTreeA<float>(
+    const std::vector<std::vector<int>>& treeStructure);
 
 template std::vector<Node<float>> generateTreeB<float>(
     const std::vector<Node<float>>& treeA);

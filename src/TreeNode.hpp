@@ -6,7 +6,10 @@
 template <typename T>
 struct Node {
   // TPE embedding placeholder (to be computed in a later step)
-  T x = 0.0, y = 0.0;
+  T tpeX = 0.0, tpeY = 0.0;
+  T tpeRadius = 0.0;
+  T tpeMinAngle = 0.0, tpeMaxAngle = 0.0;
+  T tpeAngle = 0.0;
 
   // Original position in Cartesian coordinates.
   T posX = 0.0, posY = 0.0;
@@ -23,5 +26,6 @@ struct Node {
 };
 
 // Number of dimensions of the feature vector for nodes in topology tree.
-// Dimensions are x, y, posX, posY, offset, angle and type in struct Node.
-constexpr int kMaxFeatureVectorDimensions = 7;
+// Dimensions are tpeX, tpeY, tpeRadius, tpeAngle, posX, posY, offset, angle and
+// type in struct Node.
+constexpr int kMaxFeatureVectorDimensions = 9;

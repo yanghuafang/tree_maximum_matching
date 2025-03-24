@@ -11,9 +11,6 @@ message(STATUS "CXX Comipler: ${CMAKE_CXX_COMPILER}")
 # Find Python3 components needed for matplotlib-cpp.
 find_package(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
 
-# Config argparse
-find_package(argparse REQUIRED)
-
 # Add the external matplotlib-cpp header directory.
 # (If you simply downloaded matplotlibcpp.h into external/matplotlib-cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/matplotlib-cpp)
@@ -24,10 +21,21 @@ add_library(TreeMatchingLib
     src/HungarianAlgorithm.cpp
 )
 
+add_library(TreeMatchingVisualizerLib
+    src/TreePreservingEmbeddingVisualizer.cpp
+    src/TreeMatchingVisualizer.cpp
+)
+
 # Specify the public include directories for the library.
 target_include_directories(TreeMatchingLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_include_directories(TreeMatchingVisualizerLib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${Python3_INCLUDE_DIRS}  # Required for matplotlib-cpp and any Python integration.
+    ${Python3_NumPy_INCLUDE_DIRS}  # for NumPy, if find_package found it.
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/matplotlib-cpp
 )
 
 add_executable(TreeMatchingTest
@@ -46,15 +54,21 @@ add_executable(HungarianAlgorithmTest
 
 # Add include directories for the executable.
 target_include_directories(TreeMatchingTest PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src              # To find tree generation code and related modules.
     ${CMAKE_CURRENT_SOURCE_DIR}/tests
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/matplotlib-cpp
-    ${Python3_INCLUDE_DIRS}
+)
+
+target_include_directories(TreePreservingEmbeddingTest PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests
+)
+
+target_include_directories(HungarianAlgorithmTest PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests
 )
 
 # Link the library (and, if needed, Python3 libraries) to the test executable.
-target_link_libraries(TreeMatchingTest PRIVATE TreeMatchingLib ${Python3_LIBRARIES} argparse::argparse)
+target_link_libraries(TreeMatchingTest PRIVATE TreeMatchingLib TreeMatchingVisualizerLib ${Python3_LIBRARIES})
 
-target_link_libraries(TreePreservingEmbeddingTest PRIVATE TreeMatchingLib ${Python3_LIBRARIES} argparse::argparse)
+target_link_libraries(TreePreservingEmbeddingTest PRIVATE TreeMatchingLib TreeMatchingVisualizerLib 
+                      ${Python3_LIBRARIES})
 
-target_link_libraries(HungarianAlgorithmTest PRIVATE TreeMatchingLib ${Python3_LIBRARIES} argparse::argparse)
+target_link_libraries(HungarianAlgorithmTest PRIVATE TreeMatchingLib TreeMatchingVisualizerLib ${Python3_LIBRARIES})

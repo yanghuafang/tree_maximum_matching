@@ -1,7 +1,8 @@
 #include "TreeMatching.hpp"
 
 template <typename T>
-std::vector<Node<T>> generateTreeA();
+std::vector<Node<T>> generateTreeA(
+    const std::vector<std::vector<int>>& treeStructure);
 
 template <typename T>
 std::vector<Node<T>> generateTreeB(const std::vector<Node<T>>& treeA);
