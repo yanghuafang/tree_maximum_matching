@@ -135,12 +135,13 @@ template <typename T>
 void visualizeTreesMatching(const std::vector<Node<T>> &treeA,
                             const std::vector<Node<T>> &treeB,
                             const std::vector<int> &matchRes,
+                            const std::string &similarityType,
                             const std::string &treeAEdgeColor,
                             const std::string &treeBEdgeColor,
                             const std::string &matchLineColor) {
   // Create and set up the figure.
   plt::figure();
-  plt::title("Tree Matching Visualization");
+  plt::title("Tree Matching Visualization : " + similarityType);
   // Counterclockwise 90 degrees rotation, as vehicle coordinate system is: axis
   // x points to front, axis y points to left.
   plt::xlabel("Y-axis");
@@ -181,5 +182,5 @@ template void visualizeMatching<float>(const std::vector<Node<float>> &treeA,
 template void visualizeTreesMatching<float>(
     const std::vector<Node<float>> &treeA,
     const std::vector<Node<float>> &treeB, const std::vector<int> &matchRes,
-    const std::string &treeAEdgeColor, const std::string &treeBEdgeColor,
-    const std::string &matchLineColor);
+    const std::string &similarityType, const std::string &treeAEdgeColor,
+    const std::string &treeBEdgeColor, const std::string &matchLineColor);

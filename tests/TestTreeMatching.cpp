@@ -29,6 +29,11 @@ int main() {
       {}       // node 9
   };
 
+  // Set parameters for edge colors and matching line color.
+  std::string treeAEdgeColor = "red";
+  std::string treeBEdgeColor = "blue";
+  std::string matchLineColor = "green";
+
   // Generate Tree A first.
   std::vector<Node<float>> treeA = generateTreeA<float>(treeStructure);
   printTree(treeA, "treeA");
@@ -37,17 +42,21 @@ int main() {
   std::vector<Node<float>> treeB = generateTreeB<float>(treeA);
   printTree(treeB, "treeB");
 
-  std::vector<int> matchRes = matchTrees(treeA, treeB);
-  printMatching(matchRes, "treeA", "treeB");
+  // Cosine match
+  std::vector<int> cosMatchRes = matchTrees(treeA, treeB);
+  printMatching(cosMatchRes, "treeA", "treeB");
 
-  // Set parameters for edge colors and matching line color.
-  std::string treeAEdgeColor = "red";
-  std::string treeBEdgeColor = "blue";
-  std::string matchLineColor = "green";
+  // Visualize the trees and their cosine matching.
+  visualizeTreesMatching(treeA, treeB, cosMatchRes, "cosine", treeAEdgeColor,
+                         treeBEdgeColor, matchLineColor);
 
-  // Visualize the trees and their matching.
-  visualizeTreesMatching(treeA, treeB, matchRes, treeAEdgeColor, treeBEdgeColor,
-                         matchLineColor);
+  // Euclidean match
+  std::vector<int> euclideanMatchRes = matchTrees(treeA, treeB, "euclidean");
+  printMatching(euclideanMatchRes, "treeA", "treeB");
+
+  // Visualize the trees and their euclidean matching.
+  visualizeTreesMatching(treeA, treeB, euclideanMatchRes, "euclidean",
+                         treeAEdgeColor, treeBEdgeColor, matchLineColor);
 
   return 0;
 }

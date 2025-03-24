@@ -19,6 +19,7 @@ template <typename T>
 void visualizeTreesMatching(const std::vector<Node<T>> &treeA,
                             const std::vector<Node<T>> &treeB,
                             const std::vector<int> &matchRes,
+                            const std::string &similarityType,
                             const std::string &treeAEdgeColor,
                             const std::string &treeBEdgeColor,
                             const std::string &matchLineColor);
