@@ -26,6 +26,6 @@ struct Node {
 };
 
 // Number of dimensions of the feature vector for nodes in topology tree.
-// Dimensions are tpeX, tpeY, tpeRadius, tpeAngle, posX, posY, offset, angle and
-// type in struct Node.
-constexpr int kMaxFeatureVectorDimensions = 9;
+// Dimensions are (tpeX, tpeY), tpeRadius, tpeAngle, (posX, posY), offset, angle
+// and type in struct Node.
+constexpr int kMaxFeatureVectorDimensions = 7;

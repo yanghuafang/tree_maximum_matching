@@ -15,6 +15,9 @@
 template <typename T>
 std::vector<std::vector<T>> generateFeatureVectors(
     const std::vector<Node<T>>& tree) {
+  // Determine normalization parameters for tpeRadius.
+  T tpeRadiusMin = std::numeric_limits<T>::max();
+  T tpeRadiusMax = std::numeric_limits<T>::lowest();
   // Determine normalization parameters for posX, posY and offset.
   T posXMin = std::numeric_limits<T>::max();
   T posXMax = std::numeric_limits<T>::lowest();
@@ -23,6 +26,9 @@ std::vector<std::vector<T>> generateFeatureVectors(
   T offsetMax = 0.0;
 
   for (const auto& node : tree) {
+    if (node.tpeRadius < tpeRadiusMin) tpeRadiusMin = node.tpeRadius;
+    if (node.tpeRadius > tpeRadiusMax) tpeRadiusMax = node.tpeRadius;
+
     if (node.posX < posXMin) posXMin = node.posX;
     if (node.posX > posXMax) posXMax = node.posX;
     if (node.posY < posYMin) posYMin = node.posY;
@@ -43,6 +49,17 @@ std::vector<std::vector<T>> generateFeatureVectors(
     // Append precomputed TPE embedding.
     featureVector.push_back(node.tpeX);
     featureVector.push_back(node.tpeY);
+
+    // Normalize tpeRadius using min-max scaling.
+    T normRadius =
+        (tpeRadiusMax - tpeRadiusMin == 0)
+            ? 0.5
+            : (node.tpeRadius - tpeRadiusMin) / (tpeRadiusMax - tpeRadiusMin);
+    featureVector.push_back(normRadius);
+
+    // Convert tpe angle to sine and cosine components.
+    featureVector.push_back(std::sin(node.tpeAngle));
+    featureVector.push_back(std::cos(node.tpeAngle));
 
     // Normalize original position using min-max scaling.
     T normPosX = (posXMax - posXMin == 0)
