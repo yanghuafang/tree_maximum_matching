@@ -143,6 +143,7 @@ std::vector<Node<T>> generateTreeB(const std::vector<Node<T>>& treeA) {
 
 template <typename T>
 void printTree(const std::vector<Node<T>>& tree, const std::string& treeName) {
+  if (!kDebug) return;
   std::cout << "Tree: " << treeName << std::endl;
   for (size_t i = 0; i < tree.size(); ++i) {
     std::cout << "  Node " << i << ": pos=(" << tree[i].posX << ", "

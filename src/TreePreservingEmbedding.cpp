@@ -103,6 +103,7 @@ void generateTreePreservingEmbedding(std::vector<Node<T>>& tree) {
 template <typename T>
 void printTreePreservingEmbedding(const std::vector<Node<T>>& tree,
                                   const std::string& treeName) {
+  if (!kDebug) return;
   std::cout << "TPE of Tree " << treeName << std::endl;
   for (size_t i = 0; i < tree.size(); i++) {
     std::cout << "  Node " << i << ": "

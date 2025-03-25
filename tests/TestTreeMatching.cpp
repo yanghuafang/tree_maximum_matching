@@ -1,3 +1,6 @@
+#include <chrono>
+#include <iostream>
+
 #include "TreeMatching.hpp"
 #include "TreeMatchingTestHelper.hpp"
 #include "TreeMatchingVisualizer.hpp"
@@ -43,7 +46,13 @@ int main() {
   printTree(treeB, "treeB");
 
   // Cosine match
+  auto start = std::chrono::high_resolution_clock::now();
   std::vector<int> cosMatchRes = matchTrees(treeA, treeB);
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration =
+      std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+  std::cout << "matchTrees spent " << duration.count() << " microseconds!"
+            << std::endl;
   printMatching(cosMatchRes, "treeA", "treeB");
 
   // Visualize the trees and their cosine matching.

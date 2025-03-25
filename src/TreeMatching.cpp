@@ -94,6 +94,7 @@ std::vector<std::vector<T>> generateFeatureVectors(
 template <typename T>
 void printFeatureVectors(const std::vector<std::vector<T>>& featureVectors,
                          const std::string& treeName) {
+  if (!kDebug) return;
   std::cout << "Feature vectors for Tree " << treeName << std::endl;
   for (size_t i = 0; i < featureVectors.size(); ++i) {
     std::cout << "  Node " << i + 1 << " final feature vector: ";
@@ -165,6 +166,7 @@ std::vector<std::vector<T>> createSimilarityMatrix(
 template <typename T>
 void printSimilarityMatrix(const std::vector<std::vector<T>>& similarityMatrix,
                            const std::string& similarityType) {
+  if (!kDebug) return;
   std::cout << "Similarity Matrix (" << similarityType << ")" << std::endl
             << "  ";
   for (const auto& row : similarityMatrix) {
@@ -213,6 +215,7 @@ std::vector<std::vector<T>> convertSimilarityMatrix2CostMatrix(
 template <typename T>
 void printCostMatrix(const std::vector<std::vector<T>>& costMatrix,
                      const std::string& costType) {
+  if (!kDebug) return;
   std::cout << "Cost Matrix (" << costType << ")" << std::endl << "  ";
   for (const auto& row : costMatrix) {
     for (T sim : row) {
@@ -283,6 +286,7 @@ std::vector<int> matchTrees(std::vector<Node<T>>& treeA,
 
 void printMatching(const std::vector<int>& matchRes, const std::string& treeA,
                    const std::string& treeB) {
+  if (!kDebug) return;
   std::cout << "Maximum matching between " << treeA << " and " << treeB << ":"
             << std::endl;
   for (int i = 0; i < matchRes.size(); ++i) {
