@@ -1,6 +1,8 @@
 #include "TreeMatching.hpp"
 
+#include <cmath>
 #include <iostream>
+#include <limits>
 
 #include "HungarianAlgorithm.hpp"
 #include "TreePreservingEmbedding.hpp"
