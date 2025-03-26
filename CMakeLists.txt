@@ -11,9 +11,13 @@ message(STATUS "CXX Comipler: ${CMAKE_CXX_COMPILER}")
 # Find Python3 components needed for matplotlib-cpp.
 find_package(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
 
-# Add the external matplotlib-cpp header directory.
-# (If you simply downloaded matplotlibcpp.h into external/matplotlib-cpp)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/matplotlib-cpp)
+# If you installed nlohmann/json via Homebrew or Conda, this should find the package.
+find_package(nlohmann_json REQUIRED)
+
+get_target_property(NLOHMANN_INCLUDE_DIR nlohmann_json::nlohmann_json INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "nlohmann_json include directory: ${NLOHMANN_INCLUDE_DIR}")
+
+find_package(argparse REQUIRED)
 
 add_library(TreeMatchingLib
     src/TreeMatching.cpp
@@ -21,9 +25,10 @@ add_library(TreeMatchingLib
     src/HungarianAlgorithm.cpp
 )
 
-add_library(TreeMatchingVisualizerLib
+add_library(UtilityLib
     src/TreePreservingEmbeddingVisualizer.cpp
     src/TreeMatchingVisualizer.cpp
+    src/TreeLoader.cpp
 )
 
 # Specify the public include directories for the library.
@@ -31,11 +36,12 @@ target_include_directories(TreeMatchingLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_include_directories(TreeMatchingVisualizerLib PUBLIC
+target_include_directories(UtilityLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${Python3_INCLUDE_DIRS}  # Required for matplotlib-cpp and any Python integration.
     ${Python3_NumPy_INCLUDE_DIRS}  # for NumPy, if find_package found it.
     ${CMAKE_CURRENT_SOURCE_DIR}/external/matplotlib-cpp
+    ${NLOHMANN_INCLUDE_DIR}
 )
 
 add_executable(TreeMatchingTest
@@ -66,9 +72,10 @@ target_include_directories(HungarianAlgorithmTest PUBLIC
 )
 
 # Link the library (and, if needed, Python3 libraries) to the test executable.
-target_link_libraries(TreeMatchingTest PRIVATE TreeMatchingLib TreeMatchingVisualizerLib ${Python3_LIBRARIES})
+target_link_libraries(TreeMatchingTest PRIVATE TreeMatchingLib UtilityLib ${Python3_LIBRARIES} 
+                      nlohmann_json::nlohmann_json argparse::argparse)
 
-target_link_libraries(TreePreservingEmbeddingTest PRIVATE TreeMatchingLib TreeMatchingVisualizerLib 
-                      ${Python3_LIBRARIES})
+target_link_libraries(TreePreservingEmbeddingTest PRIVATE TreeMatchingLib UtilityLib 
+                      ${Python3_LIBRARIES} nlohmann_json::nlohmann_json argparse::argparse)
 
-target_link_libraries(HungarianAlgorithmTest PRIVATE TreeMatchingLib TreeMatchingVisualizerLib ${Python3_LIBRARIES})
+target_link_libraries(HungarianAlgorithmTest PRIVATE TreeMatchingLib UtilityLib ${Python3_LIBRARIES})
