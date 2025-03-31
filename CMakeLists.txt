@@ -49,6 +49,11 @@ add_executable(TreeMatchingTest
     tests/TreeMatchingTestHelper.cpp
 )
 
+add_executable(TreeMatchingTimeTest
+    tests/TestTreeMatchingTime.cpp
+    tests/TreeMatchingTestHelper.cpp
+)
+
 add_executable(TreePreservingEmbeddingTest
     tests/TestTreePreservingEmbedding.cpp
     tests/TreeMatchingTestHelper.cpp
@@ -73,6 +78,9 @@ target_include_directories(HungarianAlgorithmTest PUBLIC
 
 # Link the library (and, if needed, Python3 libraries) to the test executable.
 target_link_libraries(TreeMatchingTest PRIVATE TreeMatchingLib UtilityLib ${Python3_LIBRARIES} 
+                      nlohmann_json::nlohmann_json argparse::argparse)
+
+target_link_libraries(TreeMatchingTimeTest PRIVATE TreeMatchingLib UtilityLib ${Python3_LIBRARIES} 
                       nlohmann_json::nlohmann_json argparse::argparse)
 
 target_link_libraries(TreePreservingEmbeddingTest PRIVATE TreeMatchingLib UtilityLib 

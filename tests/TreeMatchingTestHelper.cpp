@@ -150,8 +150,8 @@ void printTree(const std::vector<TreeNode<T>>& tree,
     std::cout << "  Node " << i << ": pos=(" << tree[i].posX << ", "
               << tree[i].posY << ")"
               << ", offset=" << tree[i].offset << ", angle=" << tree[i].angle
-              << ", type=" << tree[i].type
-              << ", parent=" << (tree[i].parent + 1) << std::endl;
+              << ", type=" << tree[i].type << ", parent=" << tree[i].parent
+              << std::endl;
   }
 }
 

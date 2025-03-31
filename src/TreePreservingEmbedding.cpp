@@ -37,15 +37,12 @@ int getTreeNodeLevel(const std::vector<TreeNode<T>>& tree, int index) {
 // - For each node, its TPE angle range is divided equally among its children,
 //   and each child receives its tpeMinAngle, tpeMaxAngle, and tpeAngle computed
 //   accordingly. The TPE radius of a child is set to its parent's TPE radius
-//   plus a fixed step (here chosen as 10).
+//   plus one.
 // - Finally, tpeX and tpeY for each node are computed from the polar
 // coordinates.
 template <typename T>
 void generateTreePreservingEmbedding(std::vector<TreeNode<T>>& tree) {
   if (tree.empty()) return;
-
-  // Define a constant radial step between levels.
-  const T rStep = kMaxFeatureVectorDimensions;
 
   // Initialize the root node.
   // For the root (index 0), assign the full angle range [0,360] degrees.
@@ -87,7 +84,7 @@ void generateTreePreservingEmbedding(std::vector<TreeNode<T>>& tree) {
       // Choose the midpoint of the child's angle range as its tpeAngle.
       child.tpeAngle = (child.tpeMinAngle + child.tpeMaxAngle) / 2.0;
       // Set the child's radius to be parent's radius + fixed step.
-      child.tpeRadius = parentNode.tpeRadius + rStep;
+      child.tpeRadius = parentNode.tpeRadius + 1;
       // Calculate Cartesian coordinates: note conversion from degrees to
       // radians.
       T angleRad = child.tpeAngle * M_PI / 180.0;

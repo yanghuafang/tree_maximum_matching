@@ -25,10 +25,5 @@ struct TreeNode {
   int parent = -1;            // index of the parent (-1 for root).
 };
 
-// Number of dimensions of the feature vector for nodes in topology tree.
-// Dimensions are (tpeX, tpeY), tpeRadius, tpeAngle, (posX, posY), offset, angle
-// and type in struct Node.
-constexpr int kMaxFeatureVectorDimensions = 7;
-
 // Toggle for debugging info output.
 constexpr bool kDebug = false;
