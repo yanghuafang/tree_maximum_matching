@@ -4,7 +4,7 @@
 
 // Define the structure for nodes of the topology tree.
 template <typename T>
-struct Node {
+struct TreeNode {
   // TPE embedding placeholder (to be computed in a later step)
   T tpeX = 0.0, tpeY = 0.0;
   T tpeRadius = 0.0;

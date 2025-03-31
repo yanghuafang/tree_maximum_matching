@@ -6,8 +6,8 @@
 
 // similarityType: "cosine" or "euclidean"
 template <typename T>
-std::vector<int> matchTrees(std::vector<Node<T>>& treeA,
-                            std::vector<Node<T>>& treeB,
+std::vector<int> matchTrees(std::vector<TreeNode<T>>& treeA,
+                            std::vector<TreeNode<T>>& treeB,
                             const std::string& similarityType = "cosine");
 
 void printMatching(const std::vector<int>& matching, const std::string& treeA,

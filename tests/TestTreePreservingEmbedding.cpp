@@ -43,11 +43,11 @@ int main(int argc, char* argv[]) {
     };
 
     // Generate Tree A first.
-    std::vector<Node<float>> treeA = generateTreeA<float>(treeStructure);
+    std::vector<TreeNode<float>> treeA = generateTreeA<float>(treeStructure);
     printTree(treeA, "treeA");
 
     // Generate Tree B by adding drifts.
-    std::vector<Node<float>> treeB = generateTreeB<float>(treeA);
+    std::vector<TreeNode<float>> treeB = generateTreeB<float>(treeA);
     printTree(treeB, "treeB");
 
     // Generate TPE of treeA.
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     // Display treeB TPE.
     visualizeTreePreservingEmbedding(treeB, "treeB");
   } else {
-    std::vector<Node<float>> tree;
+    std::vector<TreeNode<float>> tree;
     if (!loadTreeFromJson(tree, treeJson)) {
       std::cerr << "Failed to load tree from json file " << treeJson
                 << std::endl;

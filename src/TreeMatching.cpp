@@ -16,7 +16,7 @@
 //  one-hot encoding for type (3 dimensions)]
 template <typename T>
 std::vector<std::vector<T>> generateFeatureVectors(
-    const std::vector<Node<T>>& tree) {
+    const std::vector<TreeNode<T>>& tree) {
   // Determine normalization parameters for tpeRadius.
   T tpeRadiusMin = std::numeric_limits<T>::max();
   T tpeRadiusMax = std::numeric_limits<T>::lowest();
@@ -228,8 +228,8 @@ void printCostMatrix(const std::vector<std::vector<T>>& costMatrix,
 }
 
 template <typename T>
-std::vector<int> matchTrees(std::vector<Node<T>>& treeA,
-                            std::vector<Node<T>>& treeB,
+std::vector<int> matchTrees(std::vector<TreeNode<T>>& treeA,
+                            std::vector<TreeNode<T>>& treeB,
                             const std::string& similarityType) {
   // Generate TPE of treeA.
   generateTreePreservingEmbedding(treeA);
@@ -298,7 +298,7 @@ void printMatching(const std::vector<int>& matchRes, const std::string& treeA,
 
 // Explicit instantiations for type to use.
 template std::vector<std::vector<float>> generateFeatureVectors(
-    const std::vector<Node<float>>& tree);
+    const std::vector<TreeNode<float>>& tree);
 
 template void printFeatureVectors<float>(
     const std::vector<std::vector<float>>& featureVectors,
@@ -326,6 +326,6 @@ template void printCostMatrix<float>(
     const std::vector<std::vector<float>>& costMatrix,
     const std::string& costType);
 
-template std::vector<int> matchTrees<float>(std::vector<Node<float>>& treeA,
-                                            std::vector<Node<float>>& treeB,
+template std::vector<int> matchTrees<float>(std::vector<TreeNode<float>>& treeA,
+                                            std::vector<TreeNode<float>>& treeB,
                                             const std::string& similarityType);

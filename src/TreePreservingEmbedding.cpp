@@ -12,7 +12,7 @@
 
 // Helper function to get the node level by following parent pointers.
 template <typename T>
-int getNodeLevel(const std::vector<Node<T>>& tree, int index) {
+int getTreeNodeLevel(const std::vector<TreeNode<T>>& tree, int index) {
   int level = 0;
   int current = index;
   while (tree[current].parent != -1) {
@@ -28,7 +28,7 @@ int getNodeLevel(const std::vector<Node<T>>& tree, int index) {
 // -------------------------------------------------------------------------
 // Function: generateTreePreservingEmbedding
 //
-// Traverses the tree (represented as a vector of Node<T>) in breadth-first
+// Traverses the tree (represented as a vector of TreeNode<T>) in breadth-first
 // order and assigns each node a tree-preserving embedding based on a radial
 // layout.
 // - The root (index 0) is assigned the full angle range [0, 360]. Its TPE
@@ -41,7 +41,7 @@ int getNodeLevel(const std::vector<Node<T>>& tree, int index) {
 // - Finally, tpeX and tpeY for each node are computed from the polar
 // coordinates.
 template <typename T>
-void generateTreePreservingEmbedding(std::vector<Node<T>>& tree) {
+void generateTreePreservingEmbedding(std::vector<TreeNode<T>>& tree) {
   if (tree.empty()) return;
 
   // Define a constant radial step between levels.
@@ -68,7 +68,7 @@ void generateTreePreservingEmbedding(std::vector<Node<T>>& tree) {
     int curIdx = q.front();
     q.pop();
 
-    Node<T>& parentNode = tree[curIdx];
+    TreeNode<T>& parentNode = tree[curIdx];
     int numChildren = parentNode.children.size();
     if (numChildren == 0) continue;  // Leaf node, no children to process.
 
@@ -80,7 +80,7 @@ void generateTreePreservingEmbedding(std::vector<Node<T>>& tree) {
     // Divide the parent's angle range equally among its children.
     for (int i = 0; i < numChildren; i++) {
       int childIdx = parentNode.children[i];
-      Node<T>& child = tree[childIdx];
+      TreeNode<T>& child = tree[childIdx];
       // Compute child's angle range.
       child.tpeMinAngle = parentMin + (parentRange * i) / numChildren;
       child.tpeMaxAngle = parentMin + (parentRange * (i + 1)) / numChildren;
@@ -101,7 +101,7 @@ void generateTreePreservingEmbedding(std::vector<Node<T>>& tree) {
 }
 
 template <typename T>
-void printTreePreservingEmbedding(const std::vector<Node<T>>& tree,
+void printTreePreservingEmbedding(const std::vector<TreeNode<T>>& tree,
                                   const std::string& treeName) {
   if (!kDebug) return;
   std::cout << "TPE of Tree " << treeName << std::endl;
@@ -116,11 +116,11 @@ void printTreePreservingEmbedding(const std::vector<Node<T>>& tree,
 }
 
 // Explicit instantiations for type to use.
-template int getNodeLevel<float>(const std::vector<Node<float>>& tree,
-                                 int index);
+template int getTreeNodeLevel<float>(const std::vector<TreeNode<float>>& tree,
+                                     int index);
 
 template void generateTreePreservingEmbedding<float>(
-    std::vector<Node<float>>& tree);
+    std::vector<TreeNode<float>>& tree);
 
 template void printTreePreservingEmbedding<float>(
-    const std::vector<Node<float>>& tree, const std::string& treeName);
+    const std::vector<TreeNode<float>>& tree, const std::string& treeName);

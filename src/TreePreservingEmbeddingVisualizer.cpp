@@ -2,7 +2,6 @@
 
 #include <cmath>
 
-#include "TreeNode.hpp"
 #include "TreePreservingEmbedding.hpp"
 #include "matplotlibcpp.h"
 
@@ -18,7 +17,7 @@ namespace plt = matplotlibcpp;
 //   6. Edges are drawn between each node and its parent with color according to
 //   edge level.
 template <typename T>
-void visualizeTreePreservingEmbedding(const std::vector<Node<T>> &tree,
+void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
                                       const std::string &treeName) {
   // Separate points by node type.
   std::vector<T> xType0, yType0;
@@ -53,7 +52,7 @@ void visualizeTreePreservingEmbedding(const std::vector<Node<T>> &tree,
       double childX = tree[i].tpeX;
       double childY = tree[i].tpeY;
 
-      int level = getNodeLevel(tree, i);
+      int level = getTreeNodeLevel(tree, i);
       std::string eColor = "gray";
 
       std::vector<double> edgeX{0.0, childX};
@@ -95,4 +94,4 @@ void visualizeTreePreservingEmbedding(const std::vector<Node<T>> &tree,
 
 // Explicit instantiations for type to use.
 template void visualizeTreePreservingEmbedding<float>(
-    const std::vector<Node<float>> &tree, const std::string &treeName);
+    const std::vector<TreeNode<float>> &tree, const std::string &treeName);

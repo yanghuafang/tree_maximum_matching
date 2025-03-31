@@ -28,8 +28,8 @@ int main(int argc, char* argv[]) {
   std::string tree1json = parser.get<std::string>("--tree1");
   std::string tree2json = parser.get<std::string>("--tree2");
 
-  std::vector<Node<float>> treeA;
-  std::vector<Node<float>> treeB;
+  std::vector<TreeNode<float>> treeA;
+  std::vector<TreeNode<float>> treeB;
 
   if (tree1json.empty() && tree2json.empty()) {
     // Define the tree structure of nodeIdx : childrenIndices.

@@ -5,7 +5,7 @@
 
 // Recursive helper function to assign positions and attributes to each node.
 template <typename T>
-void assignPositions(std::vector<Node<T>>& nodes, int nodeIdx, T x, T y,
+void assignPositions(std::vector<TreeNode<T>>& nodes, int nodeIdx, T x, T y,
                      int level,
                      const std::vector<std::vector<int>>& treeStructure,
                      std::mt19937& rng) {
@@ -60,10 +60,10 @@ void assignPositions(std::vector<Node<T>>& nodes, int nodeIdx, T x, T y,
 
 // Function to generate Topology Tree A.
 template <typename T>
-std::vector<Node<T>> generateTreeA(
+std::vector<TreeNode<T>> generateTreeA(
     const std::vector<std::vector<int>>& treeStructure) {
   const int numNodes = treeStructure.size();
-  std::vector<Node<T>> nodes(numNodes);
+  std::vector<TreeNode<T>> nodes(numNodes);
 
   // Initialize a random number generator.
   std::random_device rd;
@@ -78,9 +78,9 @@ std::vector<Node<T>> generateTreeA(
 // Generates Tree B from Tree A by applying drifts to position, offset, and
 // angle.
 template <typename T>
-std::vector<Node<T>> generateTreeB(const std::vector<Node<T>>& treeA) {
+std::vector<TreeNode<T>> generateTreeB(const std::vector<TreeNode<T>>& treeA) {
   // Start from Tree A structure and attributes
-  std::vector<Node<T>> treeB = treeA;
+  std::vector<TreeNode<T>> treeB = treeA;
 
   // Initialize random generators for distance jitter and angle jitter.
   std::random_device rd;
@@ -142,7 +142,8 @@ std::vector<Node<T>> generateTreeB(const std::vector<Node<T>>& treeA) {
 }
 
 template <typename T>
-void printTree(const std::vector<Node<T>>& tree, const std::string& treeName) {
+void printTree(const std::vector<TreeNode<T>>& tree,
+               const std::string& treeName) {
   if (!kDebug) return;
   std::cout << "Tree: " << treeName << std::endl;
   for (size_t i = 0; i < tree.size(); ++i) {
@@ -156,14 +157,15 @@ void printTree(const std::vector<Node<T>>& tree, const std::string& treeName) {
 
 // Explicit instantiations for type to use.
 template void assignPositions<float>(
-    std::vector<Node<float>>& nodes, int nodeIdx, float x, float y, int level,
-    const std::vector<std::vector<int>>& treeStructure, std::mt19937& rng);
+    std::vector<TreeNode<float>>& nodes, int nodeIdx, float x, float y,
+    int level, const std::vector<std::vector<int>>& treeStructure,
+    std::mt19937& rng);
 
-template std::vector<Node<float>> generateTreeA<float>(
+template std::vector<TreeNode<float>> generateTreeA<float>(
     const std::vector<std::vector<int>>& treeStructure);
 
-template std::vector<Node<float>> generateTreeB<float>(
-    const std::vector<Node<float>>& treeA);
+template std::vector<TreeNode<float>> generateTreeB<float>(
+    const std::vector<TreeNode<float>>& treeA);
 
-template void printTree<float>(const std::vector<Node<float>>& tree,
+template void printTree<float>(const std::vector<TreeNode<float>>& tree,
                                const std::string& treeName);
