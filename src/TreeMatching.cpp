@@ -169,20 +169,17 @@ template <typename T>
 void printSimilarityMatrix(const std::vector<std::vector<T>>& similarityMatrix,
                            const std::string& similarityType) {
   if (!kDebug) return;
-  std::cout << "Similarity Matrix (" << similarityType << ")" << std::endl
-            << "  ";
+  std::cout << "Similarity Matrix (" << similarityType << ")" << std::endl;
   for (const auto& row : similarityMatrix) {
     for (T sim : row) {
-      std::cout << sim << "\t";
+      std::cout << sim << "  ";
     }
     std::cout << std::endl;
   }
 }
 
 // Convert a similarity matrix into a cost matrix.
-// The cost matrix is computed as: cost[i][j] = maxSimilarity -
-// similarityMatrix[i][j], where maxSimilarity is the maximum value in the
-// similarity matrix.
+// The cost matrix is computed as: cost[i][j] = -similarityMatrix[i][j].
 template <typename T>
 std::vector<std::vector<T>> convertSimilarityMatrix2CostMatrix(
     const std::vector<std::vector<T>>& similarityMatrix) {
@@ -193,21 +190,11 @@ std::vector<std::vector<T>> convertSimilarityMatrix2CostMatrix(
 
   size_t numCols = similarityMatrix[0].size();
 
-  // Find the maximum similarity value in the entire matrix.
-  T maxSimilarity = -std::numeric_limits<T>::infinity();
-  for (size_t i = 0; i < numRows; i++) {
-    for (size_t j = 0; j < numCols; j++) {
-      if (similarityMatrix[i][j] > maxSimilarity) {
-        maxSimilarity = similarityMatrix[i][j];
-      }
-    }
-  }
-
   // Use the maximum similarity value to construct the cost matrix.
   std::vector<std::vector<T>> costMatrix(numRows, std::vector<T>(numCols, 0.0));
   for (size_t i = 0; i < numRows; i++) {
     for (size_t j = 0; j < numCols; j++) {
-      costMatrix[i][j] = maxSimilarity - similarityMatrix[i][j];
+      costMatrix[i][j] = -similarityMatrix[i][j];
     }
   }
 
@@ -218,10 +205,10 @@ template <typename T>
 void printCostMatrix(const std::vector<std::vector<T>>& costMatrix,
                      const std::string& costType) {
   if (!kDebug) return;
-  std::cout << "Cost Matrix (" << costType << ")" << std::endl << "  ";
+  std::cout << "Cost Matrix (" << costType << ")" << std::endl;
   for (const auto& row : costMatrix) {
     for (T sim : row) {
-      std::cout << sim << "\t";
+      std::cout << sim << "  ";
     }
     std::cout << std::endl;
   }

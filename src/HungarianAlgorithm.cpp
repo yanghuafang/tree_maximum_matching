@@ -112,8 +112,10 @@ std::pair<int, T> exploreColumns(int currentColumn, int size,
   // Retrieve the row currently matched with the current column.
   // columnMatching[currentColumn]: The row associated with currentColumn.
   int rowIdx = columnMatching[currentColumn];
+
   // Candidate column with minimal cost.
   int candidateColumn = 0;
+
   // Minimal adjustment value.
   T delta = INF;
 
@@ -127,7 +129,11 @@ std::pair<int, T> exploreColumns(int currentColumn, int size,
       // If this cell offers an improvement, record it.
       if (reducedCost < minReducedCost[j]) {
         minReducedCost[j] = reducedCost;
-        // Trace the source of this relaxed cost.
+
+        // Record that column j was reached from currentColumn during
+        // exploration.
+        // This establishes a path for backtracking when reconstructing the
+        // augmenting path.
         previousColumn[j] = currentColumn;
       }
 
@@ -234,8 +240,10 @@ void augmentRowAssignment(int currentRow, int size,
                           std::vector<int>& previousColumn, T INF) {
   // Begin the augmenting path with currentRow assigned at the special index 0.
   columnMatching[0] = currentRow;
+
   // Initialize the minimal reduced cost for each column.
   std::vector<T> minReducedCost(size + 1, INF);
+
   // Keep track of which columns are included in the current augmenting path.
   std::vector<bool> visitedColumns(size + 1, false);
 
