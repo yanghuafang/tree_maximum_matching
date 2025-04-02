@@ -126,15 +126,9 @@ std::pair<int, T> exploreColumns(int currentColumn, int size,
       // cost[rowIdx - 1][j - 1]: 1-based indexing to 0-based indexing.
       T reducedCost = cost[rowIdx - 1][j - 1] - rowDuals[rowIdx] - colDuals[j];
 
-      // If this cell offers an improvement, record it.
+      // For each unvisited column j, if a better reduced cost is found.
       if (reducedCost < minReducedCost[j]) {
         minReducedCost[j] = reducedCost;
-
-        // Record that column j was reached from currentColumn during
-        // exploration.
-        // This establishes a path for backtracking when reconstructing the
-        // augmenting path.
-        previousColumn[j] = currentColumn;
       }
 
       // Update delta and candidate if this cell's cost is the best so far.
@@ -144,6 +138,12 @@ std::pair<int, T> exploreColumns(int currentColumn, int size,
       }
     }
   }
+
+  // Record that column candidateColumn was reached from currentColumn during
+  // exploration.
+  // This establishes a path for backtracking when reconstructing the
+  // augmenting path.
+  previousColumn[candidateColumn] = currentColumn;
   return std::make_pair(candidateColumn, delta);
 }
 
@@ -199,7 +199,7 @@ void updateDualVariables(int size, std::vector<T>& rowDuals,
  * Essentially, it "flips" the matching along the found path.
  *
  * Parameters:
- *  - currentColumn: The free column that ended the augmenting path.
+ *  - currentColumn: The unmatched (free) column that ended the augmenting path.
  *  - columnMatching: The matching vector to update (modified in place).
  *  - previousColumn: The array containing the backtracking information.
  */
@@ -219,7 +219,7 @@ void reconstructMatching(int currentColumn, std::vector<int>& columnMatching,
  * ------------------------------
  * For a given row (currentRow), builds an augmenting path to improve the
  * overall matching. It repeatedly explores columns and adjusts dual variables
- * until a free column is found.
+ * until an unmatched (free) column is found.
  *
  * Parameters:
  *  - currentRow: The row for which the assignment is being improved.
@@ -248,7 +248,7 @@ void augmentRowAssignment(int currentRow, int size,
   std::vector<bool> visitedColumns(size + 1, false);
 
   int currentColumn = 0;
-  // Build the augmenting path until an unassigned(free) column is reached.
+  // Build the augmenting path until an unmatched(free) column is reached.
   do {
     // Mark the current column as visited.
     visitedColumns[currentColumn] = true;
@@ -273,8 +273,10 @@ void augmentRowAssignment(int currentRow, int size,
     currentColumn = candidateColumn;
   } while (columnMatching[currentColumn] != 0);
 
-  // Once a free column is found, update the matching along the constructed
-  // augmenting path.
+  // Once an unmatched (free) column is found, previousColumn contains the
+  // indices of the columns that form the augmenting path from the starting row
+  // to this free column. update the matching along the constructed augmenting
+  // path.
   reconstructMatching(currentColumn, columnMatching, previousColumn);
 }
 
@@ -325,6 +327,10 @@ std::pair<T, std::vector<int>> hungarianAlgorithm(
   std::vector<int> columnMatching(size + 1, 0);
 
   // Used to trace back the path while constructing an augmenting path.
+  // previousColumn is used to store the column indices that form the augmenting
+  // path during the search for an unmatched (free) column. It essentially acts
+  // as a breadcrumb trail, allowing the algorithm to trace back the path once
+  // an unmatched (free) column is found.
   std::vector<int> previousColumn(size + 1, 0);
 
   // For each row (considering padded dimension), attempt to improve the
