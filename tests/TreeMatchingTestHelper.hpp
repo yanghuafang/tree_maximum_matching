@@ -6,7 +6,3 @@ std::vector<TreeNode<T>> generateTreeA(
 
 template <typename T>
 std::vector<TreeNode<T>> generateTreeB(const std::vector<TreeNode<T>>& treeA);
-
-template <typename T>
-void printTree(const std::vector<TreeNode<T>>& tree,
-               const std::string& treeName);

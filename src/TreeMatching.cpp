@@ -7,6 +7,20 @@
 #include "HungarianAlgorithm.hpp"
 #include "TreePreservingEmbedding.hpp"
 
+template <typename T>
+void printTree(const std::vector<TreeNode<T>>& tree,
+               const std::string& treeName) {
+  if (!kDebug) return;
+  std::cout << "Tree: " << treeName << std::endl;
+  for (size_t i = 0; i < tree.size(); ++i) {
+    std::cout << "  Node " << i << ": pos=(" << tree[i].posX << ", "
+              << tree[i].posY << ")"
+              << ", offset=" << tree[i].offset << ", angle=" << tree[i].angle
+              << ", type=" << tree[i].type << ", parent=" << tree[i].parent
+              << std::endl;
+  }
+}
+
 // Function to generate final normalized feature vectors for each node.
 // The final feature vector is constructed as follows:
 // [TPE embedding x, TPE embedding y,
@@ -284,6 +298,10 @@ void printMatching(const std::vector<int>& matchRes, const std::string& treeA,
 }
 
 // Explicit instantiations for type to use.
+
+template void printTree<float>(const std::vector<TreeNode<float>>& tree,
+                               const std::string& treeName);
+
 template std::vector<std::vector<float>> generateFeatureVectors(
     const std::vector<TreeNode<float>>& tree);
 

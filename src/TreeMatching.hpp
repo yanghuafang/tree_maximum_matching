@@ -4,6 +4,10 @@
 
 #include "TreeNode.hpp"
 
+template <typename T>
+void printTree(const std::vector<TreeNode<T>>& tree,
+               const std::string& treeName);
+
 // similarityType: "cosine" or "euclidean"
 template <typename T>
 std::vector<int> matchTrees(std::vector<TreeNode<T>>& treeA,

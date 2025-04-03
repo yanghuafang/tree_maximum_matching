@@ -141,20 +141,6 @@ std::vector<TreeNode<T>> generateTreeB(const std::vector<TreeNode<T>>& treeA) {
   return treeB;
 }
 
-template <typename T>
-void printTree(const std::vector<TreeNode<T>>& tree,
-               const std::string& treeName) {
-  if (!kDebug) return;
-  std::cout << "Tree: " << treeName << std::endl;
-  for (size_t i = 0; i < tree.size(); ++i) {
-    std::cout << "  Node " << i << ": pos=(" << tree[i].posX << ", "
-              << tree[i].posY << ")"
-              << ", offset=" << tree[i].offset << ", angle=" << tree[i].angle
-              << ", type=" << tree[i].type << ", parent=" << tree[i].parent
-              << std::endl;
-  }
-}
-
 // Explicit instantiations for type to use.
 template void assignPositions<float>(
     std::vector<TreeNode<float>>& nodes, int nodeIdx, float x, float y,
@@ -166,6 +152,3 @@ template std::vector<TreeNode<float>> generateTreeA<float>(
 
 template std::vector<TreeNode<float>> generateTreeB<float>(
     const std::vector<TreeNode<float>>& treeA);
-
-template void printTree<float>(const std::vector<TreeNode<float>>& tree,
-                               const std::string& treeName);

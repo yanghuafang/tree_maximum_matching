@@ -51,7 +51,6 @@ add_executable(TreeMatchingTest
 
 add_executable(TreeMatchingTimeTest
     tests/TestTreeMatchingTime.cpp
-    tests/TreeMatchingTestHelper.cpp
 )
 
 add_executable(TreePreservingEmbeddingTest
