@@ -78,9 +78,17 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  std::vector<TreeNode<float>> sortedTreeA;
+  std::vector<int> sortedTreeAIndices;
+  sortTree(treeA, sortedTreeA, sortedTreeAIndices);
+
+  std::vector<TreeNode<float>> sortedTreeB;
+  std::vector<int> sortedTreeBIndices;
+  sortTree(treeB, sortedTreeB, sortedTreeBIndices);
+
   // Cosine match
   auto start = std::chrono::high_resolution_clock::now();
-  std::vector<int> cosMatchRes = matchTrees(treeA, treeB);
+  std::vector<int> cosMatchRes = matchTrees(sortedTreeA, sortedTreeB);
   auto end = std::chrono::high_resolution_clock::now();
   auto duration =
       std::chrono::duration_cast<std::chrono::microseconds>(end - start);
@@ -94,27 +102,29 @@ int main(int argc, char* argv[]) {
   std::string matchLineColor = "green";
 
   // Visualize the trees and their cosine matching.
-  visualizeTreesMatching(treeA, treeB, cosMatchRes, "cosine", treeAEdgeColor,
-                         treeBEdgeColor, matchLineColor);
+  visualizeTreesMatching(sortedTreeA, sortedTreeB, cosMatchRes, "cosine",
+                         treeAEdgeColor, treeBEdgeColor, matchLineColor);
 
   // Euclidean match
-  std::vector<int> euclideanMatchRes = matchTrees(treeA, treeB, "euclidean");
+  std::vector<int> euclideanMatchRes =
+      matchTrees(sortedTreeA, sortedTreeB, "euclidean");
   printMatching(euclideanMatchRes, "treeA", "treeB");
 
   // Visualize the trees and their euclidean matching.
-  visualizeTreesMatching(treeA, treeB, euclideanMatchRes, "euclidean",
-                         treeAEdgeColor, treeBEdgeColor, matchLineColor);
+  visualizeTreesMatching(sortedTreeA, sortedTreeB, euclideanMatchRes,
+                         "euclidean", treeAEdgeColor, treeBEdgeColor,
+                         matchLineColor);
 
   // Save tree1 and tree2.
   std::string outputTree1json = parser.get<std::string>("--output-tree1");
   std::string outputTree2json = parser.get<std::string>("--output-tree2");
   if (!outputTree1json.empty() && !outputTree2json.empty()) {
-    if (!saveTreeToJson(treeA, outputTree1json)) {
+    if (!saveTreeToJson(sortedTreeA, outputTree1json)) {
       std::cerr << "Failed to save tree1 to json file " << outputTree1json
                 << std::endl;
       return -4;
     }
-    if (!saveTreeToJson(treeB, outputTree2json)) {
+    if (!saveTreeToJson(sortedTreeB, outputTree2json)) {
       std::cerr << "Failed to save tree2 to json file " << outputTree2json
                 << std::endl;
       return -5;

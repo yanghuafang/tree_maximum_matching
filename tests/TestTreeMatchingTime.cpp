@@ -82,8 +82,16 @@ int main(int argc, char* argv[]) {
     ++treesAIter;
     ++treesBIter;
 
+    std::vector<TreeNode<float>> sortedTreeA;
+    std::vector<int> sortedTreeAIndices;
+    sortTree(treeA, sortedTreeA, sortedTreeAIndices);
+
+    std::vector<TreeNode<float>> sortedTreeB;
+    std::vector<int> sortedTreeBIndices;
+    sortTree(treeB, sortedTreeB, sortedTreeBIndices);
+
     auto start = std::chrono::high_resolution_clock::now();
-    std::vector<int> cosMatchRes = matchTrees(treeA, treeB);
+    std::vector<int> cosMatchRes = matchTrees(sortedTreeA, sortedTreeB);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
@@ -106,8 +114,17 @@ int main(int argc, char* argv[]) {
     ++treesAIter;
     ++treesBIter;
 
+    std::vector<TreeNode<float>> sortedTreeA;
+    std::vector<int> sortedTreeAIndices;
+    sortTree(treeA, sortedTreeA, sortedTreeAIndices);
+
+    std::vector<TreeNode<float>> sortedTreeB;
+    std::vector<int> sortedTreeBIndices;
+    sortTree(treeB, sortedTreeB, sortedTreeBIndices);
+
     auto start = std::chrono::high_resolution_clock::now();
-    std::vector<int> euclideanMatchRes = matchTrees(treeA, treeB, "euclidean");
+    std::vector<int> euclideanMatchRes =
+        matchTrees(sortedTreeA, sortedTreeB, "euclidean");
     auto end = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);

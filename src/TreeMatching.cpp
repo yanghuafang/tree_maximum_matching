@@ -1,11 +1,118 @@
 #include "TreeMatching.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <queue>
+#include <utility>
 
 #include "HungarianAlgorithm.hpp"
 #include "TreePreservingEmbedding.hpp"
+
+// Compute angle of the vector from (x1, y1) to (x2, y2), and normalize the
+// angle to range [-180, 180].
+template <typename T>
+T computeAngle(T x1, T y1, T x2, T y2) {
+  T angle = std::atan2(y2 - y1, x2 - x1) * 180.0 / M_PI;
+  if (angle < -180.0) angle += 360.0;
+  if (angle > 180.0) angle -= 360.0;
+  return angle;
+}
+
+/*
+ * This function builds a new tree (sortedTree) from the original tree such
+ * that:
+ * 1. For each node in the original tree, its children are re-ordered by the
+ * angle (computed from parent's (posX,posY) to child's (posX,posY)) in
+ * ascending order.
+ * 2. Each node in sortedTree has its parent and children fields updated so that
+ *    they refer to indices within sortedTree.
+ * 3. The vector sortedIndices holds the mapping of new indices to original
+ * indices. That is, sortedTree[newIdx] originally came from tree[
+ * sortedIndices[newIdx]].
+ *
+ * The algorithm uses a breadth-first traversal. We also maintain an auxiliary
+ * vector (oldToNew) mapping each original index to its new index in sortedTree.
+ */
+template <typename T>
+void sortTree(const std::vector<TreeNode<T>>& tree,
+              std::vector<TreeNode<T>>& sortedTree,
+              std::vector<int>& sortedIndices) {
+  sortedTree.clear();
+  sortedIndices.clear();
+  if (tree.empty()) return;
+
+  // This vector maps an original node index to its new index in sortedTree.
+  std::vector<int> oldToNew(tree.size(), -1);
+
+  // Process the root separately.
+  TreeNode<T> newRoot = tree[0];
+  newRoot.parent = -1;       // root's parent is set to -1.
+  newRoot.children.clear();  // children will be populated later.
+  sortedTree.push_back(newRoot);
+  sortedIndices.push_back(0);
+  oldToNew[0] = 0;
+
+  // Queue for processing nodes in BFS order (using original indices).
+  std::queue<int> q;
+  q.push(0);  // assume tree[0] is the root.
+
+  // Process nodes in BFS order.
+  while (!q.empty()) {
+    int curIdx = q.front();
+    q.pop();
+
+    const TreeNode<T>& curNode = tree[curIdx];
+    int numChildren = curNode.children.size();
+    if (numChildren == 0) continue;
+
+    // children stores pair of child index and angle of vector from parent to
+    // child.
+    std::vector<std::pair<int, float>> children;
+    for (int i = 0; i < numChildren; ++i) {
+      int childIdx = curNode.children[i];
+      const TreeNode<T>& childNode = tree[childIdx];
+      T angle = computeAngle(curNode.posX, curNode.posY, childNode.posX,
+                             childNode.posY);
+      children.push_back(std::make_pair(childIdx, angle));
+    }
+
+    // Sort children by angle of vector from parent to child.
+    std::sort(children.begin(), children.end(),
+              [](const std::pair<int, float>& child1,
+                 const std::pair<int, float>& child2) {
+                return child1.second < child2.second;
+              });
+
+    // Put sorted children to queue.
+    std::for_each(
+        children.begin(), children.end(),
+        [&q](const std::pair<int, float>& child) { q.push(child.first); });
+
+    // Look up the parent's index in sortedTree.
+    int curNewIdx = oldToNew[curIdx];
+
+    // Update sortedTree and sortedIndices.
+    for (const std::pair<int, float>& childPair : children) {
+      int childIdx = childPair.first;
+      TreeNode<T> newChild = tree[childIdx];
+
+      // Update the parent to the parent's new index.
+      newChild.parent = curNewIdx;
+      newChild.children.clear();  // Will add its children indices later.
+
+      // The new node's index is the current size of sortedTree.
+      int childNewIdx = static_cast<int>(sortedTree.size());
+      sortedTree.push_back(newChild);
+      sortedIndices.push_back(childIdx);
+      oldToNew[childIdx] = childNewIdx;
+
+      // Append the new child index to children vector.
+      sortedTree[curNewIdx].children.push_back(childNewIdx);
+    }
+  }
+}
 
 template <typename T>
 void printTree(const std::vector<TreeNode<T>>& tree,
@@ -298,6 +405,12 @@ void printMatching(const std::vector<int>& matchRes, const std::string& treeA,
 }
 
 // Explicit instantiations for type to use.
+
+template float computeAngle<float>(float x1, float y1, float x2, float y2);
+
+template void sortTree<float>(const std::vector<TreeNode<float>>& tree,
+                              std::vector<TreeNode<float>>& sortedTree,
+                              std::vector<int>& sortedIndices);
 
 template void printTree<float>(const std::vector<TreeNode<float>>& tree,
                                const std::string& treeName);
