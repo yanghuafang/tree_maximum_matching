@@ -202,11 +202,7 @@ std::vector<std::vector<T>> generateFeatureVectors(
     featureVector.push_back(std::sin(node.angle));
     featureVector.push_back(std::cos(node.angle));
 
-    // Append one-hot encoding for the node type.
-    // Assuming node.type is one of {0, 1, 2}:
-    for (int t = 0; t < 3; t++) {
-      featureVector.push_back((node.type == t) ? 1.0 : 0.0);
-    }
+    featureVector.push_back(node.type);
 
     finalFeatures.push_back(featureVector);
   }
