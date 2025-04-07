@@ -208,9 +208,7 @@ std::vector<std::vector<T>> generateFeatureVectors(
     T normOffset = (offsetMax == 0) ? 0.0 : node.offset / offsetMax;
     featureVector.push_back(normOffset);
 
-    // Convert angle to sine and cosine components.
-    featureVector.push_back(std::sin(node.angle));
-    featureVector.push_back(std::cos(node.angle));
+    featureVector.push_back(node.angle / (2 * M_PI));
 
     featureVector.push_back(node.type);
 

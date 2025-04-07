@@ -5,19 +5,23 @@
 #include <limits>
 #include <queue>
 
-// Define M_PI if it's not available
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 // Helper function to get the node level by following parent pointers.
 template <typename T>
 int getTreeNodeLevel(const std::vector<TreeNode<T>>& tree, int index) {
   int level = 0;
   int current = index;
-  while (tree[current].parent != -1) {
-    level++;
-    current = tree[current].parent;
+  int parent = tree[current].parent;
+  while (parent != -1) {
+    const TreeNode<T>& curNode = tree[current];
+    const TreeNode<T>& parentNode = tree[parent];
+    T dist = std::sqrt(std::pow(curNode.posX - parentNode.posX, 2) +
+                       std::pow(curNode.posY - parentNode.posY, 2));
+    T delta = 0.1;
+    if (dist > delta) {
+      level++;
+    }
+    current = parent;
+    parent = tree[current].parent;
   }
   return level;
 }
@@ -50,7 +54,7 @@ void generateTreePreservingEmbedding(std::vector<TreeNode<T>>& tree) {
   tree[0].tpeMaxAngle = 360.0;
   // Here we choose the midpoint as the tpeAngle (you can change this if
   // desired).
-  tree[0].tpeAngle = (tree[0].tpeMinAngle + tree[0].tpeMaxAngle) / 2.0;
+  tree[0].tpeAngle = 0.0;
   // Place the root at the center.
   tree[0].tpeRadius = 0.0;
   // Calculate Cartesian coordinates from polar coordinates.
@@ -83,8 +87,8 @@ void generateTreePreservingEmbedding(std::vector<TreeNode<T>>& tree) {
       child.tpeMaxAngle = parentMin + (parentRange * (i + 1)) / numChildren;
       // Choose the midpoint of the child's angle range as its tpeAngle.
       child.tpeAngle = (child.tpeMinAngle + child.tpeMaxAngle) / 2.0;
-      // Set the child's radius to be parent's radius + fixed step.
-      child.tpeRadius = parentNode.tpeRadius + 1;
+      // Set the child's radius.
+      child.tpeRadius = getTreeNodeLevel(tree, childIdx);
       // Calculate Cartesian coordinates: note conversion from degrees to
       // radians.
       T angleRad = child.tpeAngle * M_PI / 180.0;

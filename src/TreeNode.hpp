@@ -26,4 +26,4 @@ struct TreeNode {
 };
 
 // Toggle for debugging info output.
-constexpr bool kDebug = false;
+constexpr bool kDebug = true;

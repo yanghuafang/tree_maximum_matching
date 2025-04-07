@@ -53,7 +53,6 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
       T childX = tree[i].tpeX;
       T childY = tree[i].tpeY;
 
-      int level = getTreeNodeLevel(tree, i);
       std::string eColor = "gray";
 
       std::vector<T> edgeX{0.0, childX};
@@ -72,9 +71,33 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
     plt::scatter(xType2, yType2, 50.0,
                  {{"color", "blue"}, {"label", "Type 2"}});
 
-  // Annotate each node with its index.
+  T delta = 0.1;
+  std::vector<std::pair<std::pair<T, T>, int>> clusters;
   for (size_t i = 0; i < tree.size(); i++) {
-    plt::text(tree[i].tpeX, tree[i].tpeY, std::to_string(i));
+    T posX = tree[i].posX;
+    T posY = tree[i].posY;
+
+    bool foundOverlap = false;
+    int overlapNum = 0;
+    for (std::pair<std::pair<T, T>, int> &cluster : clusters) {
+      T x = cluster.first.first;
+      T y = cluster.first.second;
+      T dist = std::sqrt(std::pow(x - posX, 2) + std::pow(y - posY, 2));
+      if (dist < delta) {
+        cluster.second += 1;
+        foundOverlap = true;
+        overlapNum = cluster.second;
+        break;
+      }
+    }
+    if (!foundOverlap) {
+      clusters.push_back(std::make_pair(std::make_pair(posX, posY), 0));
+    }
+
+    // Annotate each node with its index.
+    T xOffset = 0.2;
+    plt::text(tree[i].tpeX - xOffset * overlapNum, tree[i].tpeY,
+              "`" + std::to_string(i));
   }
 
   plt::legend();

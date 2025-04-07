@@ -17,6 +17,10 @@ int main(int argc, char* argv[]) {
   parser.add_argument("--output-tree2")
       .default_value("")
       .help("output json file of tree2");
+  parser.add_argument("--rotate")
+      .default_value(false)
+      .implicit_value(true)
+      .help("clockwise rotate 90 degrees");
 
   try {
     parser.parse_args(argc, argv);
@@ -27,6 +31,7 @@ int main(int argc, char* argv[]) {
 
   std::string tree1json = parser.get<std::string>("--tree1");
   std::string tree2json = parser.get<std::string>("--tree2");
+  bool rotate = parser.get<bool>("--rotate");
 
   std::vector<TreeNode<float>> treeA;
   std::vector<TreeNode<float>> treeB;
@@ -71,20 +76,26 @@ int main(int argc, char* argv[]) {
                 << std::endl;
       return -2;
     }
-    printTree(treeA, "treeA");
+
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
-    clockwiseRotate90Degrees(treeA);
+    if (rotate) {
+      clockwiseRotate90Degrees(treeA);
+    }
+    printTree(treeA, "treeA");
 
     if (!loadTreeFromJson(treeB, tree2json)) {
       std::cerr << "Failed to load tree2 from json file " << tree2json
                 << std::endl;
       return -3;
     }
-    printTree(treeB, "treeB");
+
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
-    clockwiseRotate90Degrees(treeB);
+    if (rotate) {
+      clockwiseRotate90Degrees(treeB);
+    }
+    printTree(treeB, "treeB");
   }
 
   bool block = false;
@@ -100,8 +111,8 @@ int main(int argc, char* argv[]) {
   std::vector<int> sortedTreeBIndices;
   sortTree(treeB, sortedTreeB, sortedTreeBIndices);
 
-  visualizeTree(treeB, "treeB", "red", 3, block);
-  visualizeTree(sortedTreeB, "sortedTreeB", "red", 4, block);
+  visualizeTree(treeB, "treeB", "blue", 3, block);
+  visualizeTree(sortedTreeB, "sortedTreeB", "blue", 4, block);
 
   // Cosine match
   auto start = std::chrono::high_resolution_clock::now();
