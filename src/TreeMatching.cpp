@@ -10,6 +10,16 @@
 #include "HungarianAlgorithm.hpp"
 #include "TreePreservingEmbedding.hpp"
 
+template <typename T>
+void clockwiseRotate90Degrees(std::vector<TreeNode<T>>& tree) {
+  std::for_each(tree.begin(), tree.end(), [&tree](TreeNode<T>& node) {
+    T x = node.posX;
+    T y = node.posY;
+    node.posX = -y;
+    node.posY = x;
+  });
+}
+
 // Compute angle of the vector from (x1, y1) to (x2, y2), and normalize the
 // angle to range [-90, 270].
 template <typename T>
@@ -401,6 +411,9 @@ void printMatching(const std::vector<int>& matchRes, const std::string& treeA,
 }
 
 // Explicit instantiations for type to use.
+
+template void clockwiseRotate90Degrees<float>(
+    std::vector<TreeNode<float>>& tree);
 
 template float computeAngle<float>(float x1, float y1, float x2, float y2);
 

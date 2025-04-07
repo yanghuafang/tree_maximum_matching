@@ -5,6 +5,9 @@
 #include "TreeNode.hpp"
 
 template <typename T>
+void clockwiseRotate90Degrees(std::vector<TreeNode<T>>& tree);
+
+template <typename T>
 void sortTree(const std::vector<TreeNode<T>>& tree,
               std::vector<TreeNode<T>>& sortedTree,
               std::vector<int>& sortedIndices);

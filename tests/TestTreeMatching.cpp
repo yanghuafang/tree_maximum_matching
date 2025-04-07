@@ -72,6 +72,9 @@ int main(int argc, char* argv[]) {
       return -2;
     }
     printTree(treeA, "treeA");
+    // Convert point from vehicle coordinate system(x->forward, y->left) to
+    // nomal coordinate system(x->right, y->forward).
+    clockwiseRotate90Degrees(treeA);
 
     if (!loadTreeFromJson(treeB, tree2json)) {
       std::cerr << "Failed to load tree2 from json file " << tree2json
@@ -79,6 +82,9 @@ int main(int argc, char* argv[]) {
       return -3;
     }
     printTree(treeB, "treeB");
+    // Convert point from vehicle coordinate system(x->forward, y->left) to
+    // nomal coordinate system(x->right, y->forward).
+    clockwiseRotate90Degrees(treeB);
   }
 
   bool block = false;

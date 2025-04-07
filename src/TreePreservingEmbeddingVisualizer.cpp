@@ -50,14 +50,14 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
   // own (x,y).
   for (size_t i = 0; i < tree.size(); i++) {
     if (tree[i].parent != -1) {
-      double childX = tree[i].tpeX;
-      double childY = tree[i].tpeY;
+      T childX = tree[i].tpeX;
+      T childY = tree[i].tpeY;
 
       int level = getTreeNodeLevel(tree, i);
       std::string eColor = "gray";
 
-      std::vector<double> edgeX{0.0, childX};
-      std::vector<double> edgeY{0.0, childY};
+      std::vector<T> edgeX{0.0, childX};
+      std::vector<T> edgeY{0.0, childY};
       plt::plot(edgeX, edgeY, {{"color", eColor}});
     }
   }

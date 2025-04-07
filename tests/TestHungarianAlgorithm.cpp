@@ -7,7 +7,7 @@ int main() {
       {4.0, 2.0, 8.0}, {4.0, 3.0, 7.0}, {3.0, 1.0, 6.0}};
 
   auto result = hungarianAlgorithm(cost);
-  double totalCost = result.first;
+  float totalCost = result.first;
   const std::vector<int>& assignment = result.second;
 
   std::cout << "Total minimum cost: " << totalCost << "\n";

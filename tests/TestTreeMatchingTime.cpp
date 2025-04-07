@@ -84,10 +84,16 @@ int main(int argc, char* argv[]) {
 
     std::vector<TreeNode<float>> sortedTreeA;
     std::vector<int> sortedTreeAIndices;
+    // Convert point from vehicle coordinate system(x->forward, y->left) to
+    // nomal coordinate system(x->right, y->forward).
+    clockwiseRotate90Degrees(treeA);
     sortTree(treeA, sortedTreeA, sortedTreeAIndices);
 
     std::vector<TreeNode<float>> sortedTreeB;
     std::vector<int> sortedTreeBIndices;
+    // Convert point from vehicle coordinate system(x->forward, y->left) to
+    // nomal coordinate system(x->right, y->forward).
+    clockwiseRotate90Degrees(treeB);
     sortTree(treeB, sortedTreeB, sortedTreeBIndices);
 
     auto start = std::chrono::high_resolution_clock::now();
@@ -116,10 +122,16 @@ int main(int argc, char* argv[]) {
 
     std::vector<TreeNode<float>> sortedTreeA;
     std::vector<int> sortedTreeAIndices;
+    // Convert point from vehicle coordinate system(x->forward, y->left) to
+    // nomal coordinate system(x->right, y->forward).
+    clockwiseRotate90Degrees(treeA);
     sortTree(treeA, sortedTreeA, sortedTreeAIndices);
 
     std::vector<TreeNode<float>> sortedTreeB;
     std::vector<int> sortedTreeBIndices;
+    // Convert point from vehicle coordinate system(x->forward, y->left) to
+    // nomal coordinate system(x->right, y->forward).
+    clockwiseRotate90Degrees(treeB);
     sortTree(treeB, sortedTreeB, sortedTreeBIndices);
 
     auto start = std::chrono::high_resolution_clock::now();

@@ -24,24 +24,26 @@ void renderTree(const std::vector<TreeNode<T>> &tree,
   // Draw edges from each node to its parent (if not a root)
   for (size_t i = 0; i < tree.size(); ++i) {
     if (tree[i].parent != -1) {
-      double parentX = tree[tree[i].parent].posX;
-      double parentY = tree[tree[i].parent].posY;
-      double childX = tree[i].posX;
-      double childY = tree[i].posY;
-      std::vector<double> xEdge{parentX, childX};
-      std::vector<double> yEdge{parentY, childY};
+      T parentX = tree[tree[i].parent].posX;
+      T parentY = tree[tree[i].parent].posY;
+      T childX = tree[i].posX;
+      T childY = tree[i].posY;
+      std::vector<T> xEdge{parentX, childX};
+      std::vector<T> yEdge{parentY, childY};
       plt::plot(xEdge, yEdge, {{"color", edgeColor}});
     }
   }
 
   // Group nodes by type for scatter plotting.
-  std::vector<double> xType0, yType0;
-  std::vector<double> xType1, yType1;
-  std::vector<double> xType2, yType2;
+  std::vector<T> xType0, yType0;
+  std::vector<T> xType1, yType1;
+  std::vector<T> xType2, yType2;
 
+  T delta = 0.1;
+  std::vector<std::pair<std::pair<T, T>, int>> clusters;
   for (size_t i = 0; i < tree.size(); ++i) {
-    double xVal = tree[i].posX;
-    double yVal = tree[i].posY;
+    T xVal = tree[i].posX;
+    T yVal = tree[i].posY;
     if (tree[i].type == 0) {
       xType0.push_back(xVal);
       yType0.push_back(yVal);
@@ -52,8 +54,27 @@ void renderTree(const std::vector<TreeNode<T>> &tree,
       xType2.push_back(xVal);
       yType2.push_back(yVal);
     }
+
+    bool foundOverlap = false;
+    int overlapNum = 0;
+    for (std::pair<std::pair<T, T>, int> &cluster : clusters) {
+      T x = cluster.first.first;
+      T y = cluster.first.second;
+      T dist = std::sqrt(std::pow(x - xVal, 2) + std::pow(y - yVal, 2));
+      if (dist < delta) {
+        cluster.second += 1;
+        foundOverlap = true;
+        overlapNum = cluster.second;
+        break;
+      }
+    }
+    if (!foundOverlap) {
+      clusters.push_back(std::make_pair(std::make_pair(xVal, yVal), 0));
+    }
+
     // Annotate the node with its index.
-    plt::text(xVal, yVal, std::to_string(i));
+    T xOffset = 2;
+    plt::text(xVal - overlapNum * xOffset, yVal, "`" + std::to_string(i));
   }
 
   // Scatter points for each type.
@@ -122,12 +143,12 @@ void renderMatching(const std::vector<TreeNode<T>> &treeA,
   for (size_t i = 0; i < matchRes.size(); ++i) {
     int matchedIndex = matchRes[i];
     if (matchedIndex >= 0 && static_cast<size_t>(matchedIndex) < treeB.size()) {
-      double xA = treeA[i].posX;
-      double yA = treeA[i].posY;
-      double xB = treeB[matchedIndex].posX;
-      double yB = treeB[matchedIndex].posY;
-      std::vector<double> xMatch{xA, xB};
-      std::vector<double> yMatch{yA, yB};
+      T xA = treeA[i].posX;
+      T yA = treeA[i].posY;
+      T xB = treeB[matchedIndex].posX;
+      T yB = treeB[matchedIndex].posY;
+      std::vector<T> xMatch{xA, xB};
+      std::vector<T> yMatch{yA, yB};
       plt::plot(xMatch, yMatch,
                 {{"color", matchLineColor}, {"linestyle", "--"}});
     }
