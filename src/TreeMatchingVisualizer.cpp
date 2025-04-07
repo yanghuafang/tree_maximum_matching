@@ -9,22 +9,18 @@
 namespace plt = matplotlibcpp;
 
 //------------------------------------------------------------------------------
-// First function: visualizeTree
-//
-// Plots a single tree on the current matplotlib figure using the nodes' TPE
-// coordinates. It draws edges (with the specified edge color), scatters nodes
+// It draws edges (with the specified edge color), scatters nodes
 // with different colors based on node type, and annotates each node with its
 // index.
 //
 // Parameters:
 //   tree         : The vector of nodes for the tree.
-//   labelPrefix  : A prefix label (e.g. "TreeA" or "TreeB") used for scatter
+//   treeName: A prefix label (e.g. "TreeA" or "TreeB") used for scatter
 //   labels.
 //   edgeColor    : Color used to draw the tree's edges.
 template <typename T>
-void visualizeTree(const std::vector<TreeNode<T>> &tree,
-                   const std::string &labelPrefix,
-                   const std::string &edgeColor) {
+void renderTree(const std::vector<TreeNode<T>> &tree,
+                const std::string &treeName, const std::string &edgeColor) {
   // Draw edges from each node to its parent (if not a root)
   for (size_t i = 0; i < tree.size(); ++i) {
     if (tree[i].parent != -1) {
@@ -69,18 +65,50 @@ void visualizeTree(const std::vector<TreeNode<T>> &tree,
   // x points to front, axis y points to left.
   if (!xType0.empty())
     plt::scatter(yType0, xType0, 50.0,
-                 {{"color", "red"}, {"label", labelPrefix + " Type 0"}});
+                 {{"color", "red"}, {"label", treeName + " Type 0"}});
   if (!xType1.empty())
     plt::scatter(yType1, xType1, 50.0,
-                 {{"color", "green"}, {"label", labelPrefix + " Type 1"}});
+                 {{"color", "blue"}, {"label", treeName + " Type 1"}});
   if (!xType2.empty())
     plt::scatter(yType2, xType2, 50.0,
-                 {{"color", "blue"}, {"label", labelPrefix + " Type 2"}});
+                 {{"color", "green"}, {"label", treeName + " Type 2"}});
 }
 
 //------------------------------------------------------------------------------
-// Second function: visualizeMatching
+// Plots a single tree on the current matplotlib figure.
 //
+// Parameters:
+//   tree         : The vector of nodes for the tree.
+//   treeName: A prefix label (e.g. "TreeA" or "TreeB") used for scatter
+//   labels.
+//   edgeColor    : Color used to draw the tree's edges.
+template <typename T>
+void visualizeTree(const std::vector<TreeNode<T>> &tree,
+                   const std::string &treeName, const std::string &edgeColor) {
+  // Create and set up the figure.
+  plt::figure();
+  plt::title("Tree Visualization");
+  // Counterclockwise 90 degrees rotation, as vehicle coordinate system is: axis
+  // x points to front, axis y points to left.
+  plt::xlabel("Y-axis");
+  plt::ylabel("X-axis");
+  plt::grid(true);
+
+  renderTree(tree, treeName, edgeColor);
+
+  // Enable interactive hover annotations via mplcursors.
+  PyRun_SimpleString(
+      "import matplotlib.pyplot as plt\n"
+      "import mplcursors\n"
+      "mplcursors.cursor(plt.gca().collections, hover=True).connect('add', "
+      "lambda sel: sel.annotation.set_text('({:.2f}, "
+      "{:.2f})'.format(sel.target[0], sel.target[1])))\n");
+
+  plt::legend();
+  plt::show();
+}
+
+//------------------------------------------------------------------------------
 // Draws dashed lines connecting matching nodes between treeA and treeB. Assumes
 // that matchRes is a vector whose i-th element gives the matching node index in
 // treeB for treeA[i].
@@ -93,10 +121,10 @@ void visualizeTree(const std::vector<TreeNode<T>> &tree,
 //   matchLineColor: The color used for drawing matching
 //   lines (as dashed lines).
 template <typename T>
-void visualizeMatching(const std::vector<TreeNode<T>> &treeA,
-                       const std::vector<TreeNode<T>> &treeB,
-                       const std::vector<int> &matchRes,
-                       const std::string &matchLineColor) {
+void renderMatching(const std::vector<TreeNode<T>> &treeA,
+                    const std::vector<TreeNode<T>> &treeB,
+                    const std::vector<int> &matchRes,
+                    const std::string &matchLineColor) {
   for (size_t i = 0; i < matchRes.size(); ++i) {
     int matchedIndex = matchRes[i];
     if (matchedIndex >= 0 && static_cast<size_t>(matchedIndex) < treeB.size()) {
@@ -118,7 +146,7 @@ void visualizeMatching(const std::vector<TreeNode<T>> &treeA,
 // Third function: visualizeTreesMatching
 //
 // Combines the visualization of two trees and their matching relationships.
-// It creates a new figure, calls visualizeTree twice (once for each tree) and
+// It creates a new figure, calls renderTree twice (once for each tree) and
 // then overlays the matching lines. After drawing, it enables hover annotations
 // via mplcursors and displays the final plot.
 //
@@ -148,13 +176,13 @@ void visualizeTreesMatching(const std::vector<TreeNode<T>> &treeA,
   plt::grid(true);
 
   // Visualize treeA (no horizontal shift, edge color as provided).
-  visualizeTree<T>(treeA, "TreeA", treeAEdgeColor);
+  renderTree<T>(treeA, "TreeA", treeAEdgeColor);
 
   // Visualize treeB with a horizontal shift.
-  visualizeTree<T>(treeB, "TreeB", treeBEdgeColor);
+  renderTree<T>(treeB, "TreeB", treeBEdgeColor);
 
   // Draw matching lines between treeA and treeB.
-  visualizeMatching<T>(treeA, treeB, matchRes, matchLineColor);
+  renderMatching<T>(treeA, treeB, matchRes, matchLineColor);
 
   // Enable interactive hover annotations via mplcursors.
   PyRun_SimpleString(
@@ -169,14 +197,18 @@ void visualizeTreesMatching(const std::vector<TreeNode<T>> &treeA,
 }
 
 // Explicit instantiations for type to use.
+template void renderTree<float>(const std::vector<TreeNode<float>> &tree,
+                                const std::string &treeName,
+                                const std::string &edgeColor);
+
 template void visualizeTree<float>(const std::vector<TreeNode<float>> &tree,
-                                   const std::string &labelPrefix,
+                                   const std::string &treeName,
                                    const std::string &edgeColor);
 
-template void visualizeMatching<float>(
-    const std::vector<TreeNode<float>> &treeA,
-    const std::vector<TreeNode<float>> &treeB, const std::vector<int> &matchRes,
-    const std::string &matchLineColor);
+template void renderMatching<float>(const std::vector<TreeNode<float>> &treeA,
+                                    const std::vector<TreeNode<float>> &treeB,
+                                    const std::vector<int> &matchRes,
+                                    const std::string &matchLineColor);
 
 template void visualizeTreesMatching<float>(
     const std::vector<TreeNode<float>> &treeA,

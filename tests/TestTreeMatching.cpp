@@ -71,20 +71,29 @@ int main(int argc, char* argv[]) {
                 << std::endl;
       return -2;
     }
+    printTree(treeA, "treeA");
+
     if (!loadTreeFromJson(treeB, tree2json)) {
       std::cerr << "Failed to load tree2 from json file " << tree2json
                 << std::endl;
       return -3;
     }
+    printTree(treeB, "treeB");
   }
 
   std::vector<TreeNode<float>> sortedTreeA;
   std::vector<int> sortedTreeAIndices;
   sortTree(treeA, sortedTreeA, sortedTreeAIndices);
 
+  visualizeTree(treeA, "treeA", "red");
+  visualizeTree(sortedTreeA, "sortedTreeA", "red");
+
   std::vector<TreeNode<float>> sortedTreeB;
   std::vector<int> sortedTreeBIndices;
   sortTree(treeB, sortedTreeB, sortedTreeBIndices);
+
+  visualizeTree(treeB, "treeB", "red");
+  visualizeTree(sortedTreeB, "sortedTreeB", "red");
 
   // Cosine match
   auto start = std::chrono::high_resolution_clock::now();
