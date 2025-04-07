@@ -8,6 +8,7 @@
 #include "TreeLoader.hpp"
 #include "TreeMatching.hpp"
 #include "TreeMatchingTestHelper.hpp"
+#include "TreeMatchingVisualizer.hpp"
 #include "matplotlibcpp.h"
 
 namespace plt = matplotlibcpp;
@@ -37,6 +38,9 @@ int main(int argc, char* argv[]) {
   argparse::ArgumentParser parser("tree_maximum_matching");
   parser.add_argument("--trees1").default_value("").help("json file of trees1");
   parser.add_argument("--trees2").default_value("").help("json file of trees2");
+  parser.add_argument("--similarity")
+      .default_value("cosine")
+      .help("similarity method: cosine or euclidean");
 
   try {
     parser.parse_args(argc, argv);
@@ -47,6 +51,7 @@ int main(int argc, char* argv[]) {
 
   std::string trees1json = parser.get<std::string>("--trees1");
   std::string trees2json = parser.get<std::string>("--trees2");
+  std::string similarity = parser.get<std::string>("--similarity");
 
   std::list<std::vector<TreeNode<float>>> treesA;
   std::list<std::vector<TreeNode<float>>> treesB;
@@ -75,8 +80,14 @@ int main(int argc, char* argv[]) {
   std::list<std::vector<TreeNode<float>>>::iterator treesAIter = treesA.begin();
   std::list<std::vector<TreeNode<float>>>::iterator treesBIter = treesB.begin();
 
+  // Set parameters for edge colors and matching line color.
+  std::string treeAEdgeColor = "red";
+  std::string treeBEdgeColor = "blue";
+  std::string matchLineColor = "green";
+
   // Cosine match
-  while (treesAIter != treesA.end() && treesBIter != treesB.end()) {
+  while (similarity == "cosine" && treesAIter != treesA.end() &&
+         treesBIter != treesB.end()) {
     std::vector<TreeNode<float>>& treeA = *treesAIter;
     std::vector<TreeNode<float>>& treeB = *treesBIter;
     ++treesAIter;
@@ -104,17 +115,24 @@ int main(int argc, char* argv[]) {
 
     timeOfFrames.push_back(duration.count());
     printMatching(cosMatchRes, "treeA", "treeB");
+
+    // Visualize the trees and their cosine matching.
+    visualizeTreesMatching(sortedTreeA, sortedTreeB, cosMatchRes, "cosine",
+                           treeAEdgeColor, treeBEdgeColor, matchLineColor);
   }
 
-  visualizeTimeOfFrames(timeOfFrames,
-                        "Time consumption per frame of tree matching (cosine)");
+  if (similarity == "cosine") {
+    visualizeTimeOfFrames(
+        timeOfFrames, "Time consumption per frame of tree matching (cosine)");
 
-  timeOfFrames.clear();
-  treesAIter = treesA.begin();
-  treesBIter = treesB.begin();
+    timeOfFrames.clear();
+    treesAIter = treesA.begin();
+    treesBIter = treesB.begin();
+  }
 
   // Euclidean match
-  while (treesAIter != treesA.end() && treesBIter != treesB.end()) {
+  while (similarity == "euclidean" && treesAIter != treesA.end() &&
+         treesBIter != treesB.end()) {
     std::vector<TreeNode<float>>& treeA = *treesAIter;
     std::vector<TreeNode<float>>& treeB = *treesBIter;
     ++treesAIter;
@@ -143,10 +161,18 @@ int main(int argc, char* argv[]) {
 
     timeOfFrames.push_back(duration.count());
     printMatching(euclideanMatchRes, "treeA", "treeB");
+
+    // Visualize the trees and their euclidean matching.
+    visualizeTreesMatching(sortedTreeA, sortedTreeB, euclideanMatchRes,
+                           "euclidean", treeAEdgeColor, treeBEdgeColor,
+                           matchLineColor);
   }
 
-  visualizeTimeOfFrames(
-      timeOfFrames, "Time consumption per frame of tree matching (euclidean)");
+  if (similarity == "euclidean") {
+    visualizeTimeOfFrames(
+        timeOfFrames,
+        "Time consumption per frame of tree matching (euclidean)");
+  }
 
   return 0;
 }

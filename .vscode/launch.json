@@ -68,6 +68,8 @@
                 "trees1.json",
                 "--trees2",
                 "trees2.json",
+                "--similarity",
+                "euclidean",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/../tree_maximum_matching_build/",
