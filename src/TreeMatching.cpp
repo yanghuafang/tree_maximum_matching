@@ -11,12 +11,12 @@
 #include "TreePreservingEmbedding.hpp"
 
 // Compute angle of the vector from (x1, y1) to (x2, y2), and normalize the
-// angle to range [-180, 180].
+// angle to range [-90, 270].
 template <typename T>
 T computeAngle(T x1, T y1, T x2, T y2) {
   T angle = std::atan2(y2 - y1, x2 - x1) * 180.0 / M_PI;
-  if (angle < -180.0) angle += 360.0;
-  if (angle > 180.0) angle -= 360.0;
+  if (angle < -90.0) angle += 360.0;
+  if (angle > 270.0) angle -= 360.0;
   return angle;
 }
 

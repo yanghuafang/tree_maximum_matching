@@ -81,19 +81,21 @@ int main(int argc, char* argv[]) {
     printTree(treeB, "treeB");
   }
 
+  bool block = false;
+
   std::vector<TreeNode<float>> sortedTreeA;
   std::vector<int> sortedTreeAIndices;
   sortTree(treeA, sortedTreeA, sortedTreeAIndices);
 
-  visualizeTree(treeA, "treeA", "red");
-  visualizeTree(sortedTreeA, "sortedTreeA", "red");
+  visualizeTree(treeA, "treeA", "red", 1, block);
+  visualizeTree(sortedTreeA, "sortedTreeA", "red", 2, block);
 
   std::vector<TreeNode<float>> sortedTreeB;
   std::vector<int> sortedTreeBIndices;
   sortTree(treeB, sortedTreeB, sortedTreeBIndices);
 
-  visualizeTree(treeB, "treeB", "red");
-  visualizeTree(sortedTreeB, "sortedTreeB", "red");
+  visualizeTree(treeB, "treeB", "red", 3, block);
+  visualizeTree(sortedTreeB, "sortedTreeB", "red", 4, block);
 
   // Cosine match
   auto start = std::chrono::high_resolution_clock::now();
@@ -112,7 +114,8 @@ int main(int argc, char* argv[]) {
 
   // Visualize the trees and their cosine matching.
   visualizeTreesMatching(sortedTreeA, sortedTreeB, cosMatchRes, "cosine",
-                         treeAEdgeColor, treeBEdgeColor, matchLineColor);
+                         treeAEdgeColor, treeBEdgeColor, matchLineColor, 5,
+                         block);
 
   // Euclidean match
   std::vector<int> euclideanMatchRes =
@@ -122,7 +125,7 @@ int main(int argc, char* argv[]) {
   // Visualize the trees and their euclidean matching.
   visualizeTreesMatching(sortedTreeA, sortedTreeB, euclideanMatchRes,
                          "euclidean", treeAEdgeColor, treeBEdgeColor,
-                         matchLineColor);
+                         matchLineColor, 6, block);
 
   // Save tree1 and tree2.
   std::string outputTree1json = parser.get<std::string>("--output-tree1");
@@ -138,6 +141,10 @@ int main(int argc, char* argv[]) {
                 << std::endl;
       return -5;
     }
+  }
+
+  if (!block) {
+    pltShow();
   }
 
   return 0;

@@ -30,9 +30,7 @@ void renderTree(const std::vector<TreeNode<T>> &tree,
       double childY = tree[i].posY;
       std::vector<double> xEdge{parentX, childX};
       std::vector<double> yEdge{parentY, childY};
-      // Counterclockwise 90 degrees rotation, as vehicle coordinate system is:
-      // axis x points to front, axis y points to left.
-      plt::plot(yEdge, xEdge, {{"color", edgeColor}});
+      plt::plot(xEdge, yEdge, {{"color", edgeColor}});
     }
   }
 
@@ -55,22 +53,18 @@ void renderTree(const std::vector<TreeNode<T>> &tree,
       yType2.push_back(yVal);
     }
     // Annotate the node with its index.
-    // Counterclockwise 90 degrees rotation, as vehicle coordinate system is:
-    // axis x points to front, axis y points to left.
-    plt::text(yVal, xVal, std::to_string(i));
+    plt::text(xVal, yVal, std::to_string(i));
   }
 
   // Scatter points for each type.
-  // Counterclockwise 90 degrees rotation, as vehicle coordinate system is: axis
-  // x points to front, axis y points to left.
   if (!xType0.empty())
-    plt::scatter(yType0, xType0, 50.0,
+    plt::scatter(xType0, yType0, 50.0,
                  {{"color", "red"}, {"label", treeName + " Type 0"}});
   if (!xType1.empty())
-    plt::scatter(yType1, xType1, 50.0,
+    plt::scatter(xType1, yType1, 50.0,
                  {{"color", "blue"}, {"label", treeName + " Type 1"}});
   if (!xType2.empty())
-    plt::scatter(yType2, xType2, 50.0,
+    plt::scatter(xType2, yType2, 50.0,
                  {{"color", "green"}, {"label", treeName + " Type 2"}});
 }
 
@@ -84,14 +78,13 @@ void renderTree(const std::vector<TreeNode<T>> &tree,
 //   edgeColor    : Color used to draw the tree's edges.
 template <typename T>
 void visualizeTree(const std::vector<TreeNode<T>> &tree,
-                   const std::string &treeName, const std::string &edgeColor) {
+                   const std::string &treeName, const std::string &edgeColor,
+                   int figure, bool block) {
   // Create and set up the figure.
-  plt::figure();
+  plt::figure(figure);
   plt::title("Tree Visualization");
-  // Counterclockwise 90 degrees rotation, as vehicle coordinate system is: axis
-  // x points to front, axis y points to left.
-  plt::xlabel("Y-axis");
-  plt::ylabel("X-axis");
+  plt::xlabel("X-axis");
+  plt::ylabel("Y-axis");
   plt::grid(true);
 
   renderTree(tree, treeName, edgeColor);
@@ -105,7 +98,8 @@ void visualizeTree(const std::vector<TreeNode<T>> &tree,
       "{:.2f})'.format(sel.target[0], sel.target[1])))\n");
 
   plt::legend();
-  plt::show();
+  plt::show(block);
+  plt::pause(0.1);
 }
 
 //------------------------------------------------------------------------------
@@ -134,17 +128,13 @@ void renderMatching(const std::vector<TreeNode<T>> &treeA,
       double yB = treeB[matchedIndex].posY;
       std::vector<double> xMatch{xA, xB};
       std::vector<double> yMatch{yA, yB};
-      // Counterclockwise 90 degrees rotation, as vehicle coordinate system is:
-      // axis x points to front, axis y points to left.
-      plt::plot(yMatch, xMatch,
+      plt::plot(xMatch, yMatch,
                 {{"color", matchLineColor}, {"linestyle", "--"}});
     }
   }
 }
 
 //------------------------------------------------------------------------------
-// Third function: visualizeTreesMatching
-//
 // Combines the visualization of two trees and their matching relationships.
 // It creates a new figure, calls renderTree twice (once for each tree) and
 // then overlays the matching lines. After drawing, it enables hover annotations
@@ -165,14 +155,13 @@ void visualizeTreesMatching(const std::vector<TreeNode<T>> &treeA,
                             const std::string &similarityType,
                             const std::string &treeAEdgeColor,
                             const std::string &treeBEdgeColor,
-                            const std::string &matchLineColor) {
+                            const std::string &matchLineColor, int figure,
+                            bool block) {
   // Create and set up the figure.
-  plt::figure();
+  plt::figure(figure);
   plt::title("Tree Matching Visualization : " + similarityType);
-  // Counterclockwise 90 degrees rotation, as vehicle coordinate system is: axis
-  // x points to front, axis y points to left.
-  plt::xlabel("Y-axis");
-  plt::ylabel("X-axis");
+  plt::xlabel("X-axis");
+  plt::ylabel("Y-axis");
   plt::grid(true);
 
   // Visualize treeA (no horizontal shift, edge color as provided).
@@ -193,8 +182,11 @@ void visualizeTreesMatching(const std::vector<TreeNode<T>> &treeA,
       "{:.2f})'.format(sel.target[0], sel.target[1])))\n");
 
   plt::legend();
-  plt::show();
+  plt::show(block);
+  plt::pause(0.1);
 }
+
+void pltShow() { plt::show(); }
 
 // Explicit instantiations for type to use.
 template void renderTree<float>(const std::vector<TreeNode<float>> &tree,
@@ -203,7 +195,8 @@ template void renderTree<float>(const std::vector<TreeNode<float>> &tree,
 
 template void visualizeTree<float>(const std::vector<TreeNode<float>> &tree,
                                    const std::string &treeName,
-                                   const std::string &edgeColor);
+                                   const std::string &edgeColor, int figure,
+                                   bool block);
 
 template void renderMatching<float>(const std::vector<TreeNode<float>> &treeA,
                                     const std::vector<TreeNode<float>> &treeB,
@@ -214,4 +207,5 @@ template void visualizeTreesMatching<float>(
     const std::vector<TreeNode<float>> &treeA,
     const std::vector<TreeNode<float>> &treeB, const std::vector<int> &matchRes,
     const std::string &similarityType, const std::string &treeAEdgeColor,
-    const std::string &treeBEdgeColor, const std::string &matchLineColor);
+    const std::string &treeBEdgeColor, const std::string &matchLineColor,
+    int figure1, bool block);

@@ -33,19 +33,19 @@ void assignPositions(std::vector<TreeNode<T>>& nodes, int nodeIdx, T x, T y,
   if (!childrenIndices.empty()) {
     // Random distributions to determine child spacing and x offset.
     std::uniform_real_distribution<T> distChildSpacing(4.0, 24.0);
-    std::uniform_real_distribution<T> distX(5.0, 30.0);
+    std::uniform_real_distribution<T> distY(5.0, 30.0);
 
     T childSpacing = distChildSpacing(rng);
     int n = childrenIndices.size();
     // Compute a starting y position so that siblings are vertically spaced.
-    T startY = y - (childSpacing * (n - 1) / 2.0);
+    T startX = x - (childSpacing * (n - 1) / 2.0);
 
     // For each child, calculate its new position and recursively assign its
     // attributes.
     for (size_t i = 0; i < childrenIndices.size(); ++i) {
       int childIdx = childrenIndices[i];
-      T newX = x + distX(rng);
-      T newY = startY + i * childSpacing;
+      T newY = y + distY(rng);
+      T newX = startX + i * childSpacing;
 
       // Set hierarchy info: assign parent and register child.
       nodes[childIdx].parent = nodeIdx;
