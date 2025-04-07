@@ -48,6 +48,13 @@ template <typename T>
 void generateTreePreservingEmbedding(std::vector<TreeNode<T>>& tree) {
   if (tree.empty()) return;
 
+  // Get maximum level of the tree.
+  int maxLevel = 0;
+  for (int i = 0; i < tree.size(); ++i) {
+    int level = getTreeNodeLevel(tree, i);
+    if (level > maxLevel) maxLevel = level;
+  }
+
   // Initialize the root node.
   // For the root (index 0), assign the full angle range [0,360] degrees.
   tree[0].tpeMinAngle = 0.0;
@@ -88,7 +95,7 @@ void generateTreePreservingEmbedding(std::vector<TreeNode<T>>& tree) {
       // Choose the midpoint of the child's angle range as its tpeAngle.
       child.tpeAngle = (child.tpeMinAngle + child.tpeMaxAngle) / 2.0;
       // Set the child's radius.
-      child.tpeRadius = getTreeNodeLevel(tree, childIdx);
+      child.tpeRadius = getTreeNodeLevel(tree, childIdx) / maxLevel;
       // Calculate Cartesian coordinates: note conversion from degrees to
       // radians.
       T angleRad = child.tpeAngle * M_PI / 180.0;
