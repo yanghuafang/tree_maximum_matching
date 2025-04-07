@@ -3,6 +3,7 @@
 
 #include "TreeLoader.hpp"
 #include "TreeMatchingTestHelper.hpp"
+#include "TreeMatchingVisualizer.hpp"
 #include "TreePreservingEmbedding.hpp"
 #include "TreePreservingEmbeddingVisualizer.hpp"
 
@@ -18,6 +19,8 @@ int main(int argc, char* argv[]) {
   }
 
   std::string treeJson = parser.get<std::string>("--tree");
+
+  bool block = false;
 
   if (treeJson.empty()) {
     // Define the tree structure of nodeIdx : childrenIndices.
@@ -59,10 +62,10 @@ int main(int argc, char* argv[]) {
     printTreePreservingEmbedding(treeB, "treeB");
 
     // Display treeA TPE.
-    visualizeTreePreservingEmbedding(treeA, "treeA");
+    visualizeTreePreservingEmbedding(treeA, "treeA", 1, block);
 
     // Display treeB TPE.
-    visualizeTreePreservingEmbedding(treeB, "treeB");
+    visualizeTreePreservingEmbedding(treeB, "treeB", 2, block);
   } else {
     std::vector<TreeNode<float>> tree;
     if (!loadTreeFromJson(tree, treeJson)) {
@@ -74,7 +77,11 @@ int main(int argc, char* argv[]) {
 
     generateTreePreservingEmbedding(tree);
     printTreePreservingEmbedding(tree, "tree");
-    visualizeTreePreservingEmbedding(tree, "tree");
+    visualizeTreePreservingEmbedding(tree, "tree", 1, block);
+  }
+
+  if (!block) {
+    pltShow();
   }
 
   return 0;

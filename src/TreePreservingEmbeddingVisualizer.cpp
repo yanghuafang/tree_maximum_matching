@@ -18,7 +18,8 @@ namespace plt = matplotlibcpp;
 //   edge level.
 template <typename T>
 void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
-                                      const std::string &treeName) {
+                                      const std::string &treeName, int figure,
+                                      bool block) {
   // Separate points by node type.
   std::vector<T> xType0, yType0;
   std::vector<T> xType1, yType1;
@@ -38,7 +39,7 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
     }
   }
 
-  plt::figure();
+  plt::figure(figure);
   plt::title(treeName);
   plt::xlabel("X-axis");
   plt::ylabel("Y-axis");
@@ -89,9 +90,11 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
       "{:.2f})'.format(sel.target[0], sel.target[1])))\n");
 
   // Show the plot.
-  plt::show();
+  plt::show(block);
+  plt::pause(0.1);
 }
 
 // Explicit instantiations for type to use.
 template void visualizeTreePreservingEmbedding<float>(
-    const std::vector<TreeNode<float>> &tree, const std::string &treeName);
+    const std::vector<TreeNode<float>> &tree, const std::string &treeName,
+    int figure, bool block);
