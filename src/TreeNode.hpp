@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 // Define the structure for nodes of the topology tree.
@@ -23,6 +24,13 @@ struct TreeNode {
   // Hierarchical info.
   std::vector<int> children;  // indices of children in the node vector.
   int parent = -1;            // index of the parent (-1 for root).
+};
+
+// Define TreeWrapper struct that encapsulates a timestamp and tree nodes.
+template <typename T>
+struct TreeWrapper {
+  uint64_t timestamp;
+  std::vector<TreeNode<T>> tree;
 };
 
 // Toggle for debugging info output.
