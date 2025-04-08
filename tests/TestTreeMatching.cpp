@@ -71,11 +71,16 @@ int main(int argc, char* argv[]) {
     treeB = generateTreeB<float>(treeA);
     printTree(treeB, "treeB");
   } else {
-    if (!loadTreeFromJson(treeA, tree1json)) {
+    TreeWrapper<float> treeWrapperA;
+    if (!loadTreeFromJson(treeWrapperA, tree1json)) {
       std::cerr << "Failed to load tree1 from json file " << tree1json
                 << std::endl;
       return -2;
     }
+
+    treeA = treeWrapperA.tree;
+    std::cout << "Succeed to load treeA of timestamp " << treeWrapperA.timestamp
+              << " from json file " << tree1json << std::endl;
 
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
@@ -84,11 +89,16 @@ int main(int argc, char* argv[]) {
     }
     printTree(treeA, "treeA");
 
-    if (!loadTreeFromJson(treeB, tree2json)) {
+    TreeWrapper<float> treeWrapperB;
+    if (!loadTreeFromJson(treeWrapperB, tree2json)) {
       std::cerr << "Failed to load tree2 from json file " << tree2json
                 << std::endl;
       return -3;
     }
+
+    treeB = treeWrapperB.tree;
+    std::cout << "Succeed to load treeB of timestamp " << treeWrapperB.timestamp
+              << " from json file " << tree2json << std::endl;
 
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
@@ -148,12 +158,15 @@ int main(int argc, char* argv[]) {
   std::string outputTree1json = parser.get<std::string>("--output-tree1");
   std::string outputTree2json = parser.get<std::string>("--output-tree2");
   if (!outputTree1json.empty() && !outputTree2json.empty()) {
-    if (!saveTreeToJson(sortedTreeA, outputTree1json)) {
+    TreeWrapper<float> sortedTreeWrapperA{0, sortedTreeA};
+    if (!saveTreeToJson(sortedTreeWrapperA, outputTree1json)) {
       std::cerr << "Failed to save tree1 to json file " << outputTree1json
                 << std::endl;
       return -4;
     }
-    if (!saveTreeToJson(sortedTreeB, outputTree2json)) {
+
+    TreeWrapper<float> sortedTreeWrapperB{0, sortedTreeB};
+    if (!saveTreeToJson(sortedTreeWrapperB, outputTree2json)) {
       std::cerr << "Failed to save tree2 to json file " << outputTree2json
                 << std::endl;
       return -5;

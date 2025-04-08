@@ -56,15 +56,36 @@ int main(int argc, char* argv[]) {
   std::list<std::vector<TreeNode<float>>> treesA;
   std::list<std::vector<TreeNode<float>>> treesB;
 
-  if (!loadTreesFromJson(treesA, trees1json)) {
+  std::list<TreeWrapper<float>> treesWrapperA;
+  if (!loadTreesFromJson(treesWrapperA, trees1json)) {
     std::cerr << "Failed to load trees1 from json file " << trees1json
               << std::endl;
     return -2;
   }
-  if (!loadTreesFromJson(treesB, trees2json)) {
+
+  if (!treesWrapperA.empty()) {
+    for (const TreeWrapper<float>& treeWrapper : treesWrapperA) {
+      treesA.push_back(treeWrapper.tree);
+    }
+    std::cout << "Succeed to load treesA of timestamp "
+              << treesWrapperA.front().timestamp << " from json file "
+              << trees1json << std::endl;
+  }
+
+  std::list<TreeWrapper<float>> treesWrapperB;
+  if (!loadTreesFromJson(treesWrapperB, trees2json)) {
     std::cerr << "Failed to load trees2 from json file " << trees2json
               << std::endl;
     return -3;
+  }
+
+  if (!treesWrapperB.empty()) {
+    for (const TreeWrapper<float>& treeWrapper : treesWrapperB) {
+      treesB.push_back(treeWrapper.tree);
+    }
+    std::cout << "Succeed to load treesB of timestamp "
+              << treesWrapperB.front().timestamp << " from json file "
+              << trees2json << std::endl;
   }
 
   int size = 0;

@@ -3,18 +3,24 @@
 
 #include "TreeNode.hpp"
 
+// Define TreeWrapper struct that encapsulates a timestamp and tree nodes.
 template <typename T>
-bool saveTreeToJson(const std::vector<TreeNode<T>>& tree,
+struct TreeWrapper {
+  uint64_t timestamp;
+  std::vector<TreeNode<T>> tree;
+};
+
+template <typename T>
+bool saveTreeToJson(const TreeWrapper<T>& treeWrapper,
                     const std::string& filename);
 
 template <typename T>
-bool loadTreeFromJson(std::vector<TreeNode<T>>& tree,
-                      const std::string& filename);
+bool loadTreeFromJson(TreeWrapper<T>& treeWrapper, const std::string& filename);
 
 template <typename T>
-bool saveTreesToJson(const std::list<std::vector<TreeNode<T>>>& trees,
+bool saveTreesToJson(const std::list<TreeWrapper<T>>& trees,
                      const std::string& filename);
 
 template <typename T>
-bool loadTreesFromJson(std::list<std::vector<TreeNode<T>>>& trees,
+bool loadTreesFromJson(std::list<TreeWrapper<T>>& trees,
                        const std::string& filename);

@@ -97,12 +97,16 @@ int main(int argc, char* argv[]) {
     // Display treeB TPE.
     visualizeTreePreservingEmbedding(sortedTreeB, "sortedTreeB", 6, block);
   } else {
-    std::vector<TreeNode<float>> tree;
-    if (!loadTreeFromJson(tree, treeJson)) {
+    TreeWrapper<float> treeWrapper;
+    if (!loadTreeFromJson(treeWrapper, treeJson)) {
       std::cerr << "Failed to load tree from json file " << treeJson
                 << std::endl;
       return -2;
     }
+
+    std::vector<TreeNode<float>> tree = treeWrapper.tree;
+    std::cout << "Succeed to load tree of timestamp " << treeWrapper.timestamp
+              << " from json file " << treeJson << std::endl;
 
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
