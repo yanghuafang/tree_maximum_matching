@@ -71,7 +71,6 @@ int main(int argc, char* argv[]) {
     treeB = generateTreeB<float>(treeA);
     printTree(treeB, "treeB");
   } else {
-    TreeWrapper<float> treeA;
     if (!loadTreeFromJson(treeA, tree1json)) {
       std::cerr << "Failed to load tree1 from json file " << tree1json
                 << std::endl;
@@ -88,7 +87,6 @@ int main(int argc, char* argv[]) {
     }
     printTree(treeA, "treeA");
 
-    TreeWrapper<float> treeB;
     if (!loadTreeFromJson(treeB, tree2json)) {
       std::cerr << "Failed to load tree2 from json file " << tree2json
                 << std::endl;
