@@ -126,7 +126,8 @@ int main(int argc, char* argv[]) {
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
     timeOfFrames.push_back(duration.count());
-    printMatching(cosMatchRes, "treeA", "treeB");
+    printMatching(cosMatchRes, "sortedTreeA", "sortedTreeB",
+                  sortedTreeA.timestamp, sortedTreeB.timestamp);
 
     // Visualize the trees and their cosine matching.
     visualizeTreesMatching(sortedTreeA, sortedTreeB, cosMatchRes, "cosine",
@@ -172,7 +173,8 @@ int main(int argc, char* argv[]) {
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
     timeOfFrames.push_back(duration.count());
-    printMatching(euclideanMatchRes, "treeA", "treeB");
+    printMatching(euclideanMatchRes, "sortedTreeA", "sortedTreeB",
+                  sortedTreeA.timestamp, sortedTreeB.timestamp);
 
     // Visualize the trees and their euclidean matching.
     visualizeTreesMatching(sortedTreeA, sortedTreeB, euclideanMatchRes,

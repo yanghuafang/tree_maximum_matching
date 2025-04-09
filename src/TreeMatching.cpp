@@ -127,8 +127,7 @@ void sortTree(const TreeWrapper<T>& tree, TreeWrapper<T>& sortedTree,
 template <typename T>
 void printTree(const TreeWrapper<T>& tree, const std::string& treeName) {
   if (!kDebug) return;
-  std::cout << "Tree: " << treeName << " Timestamp: " << tree.timestamp
-            << std::endl;
+  std::cout << treeName << " at timestamp " << tree.timestamp << std::endl;
   for (size_t i = 0; i < tree.nodes.size(); ++i) {
     std::cout << "  Node " << i << ": pos=(" << tree.nodes[i].posX << ", "
               << tree.nodes[i].posY << ")"
@@ -397,11 +396,13 @@ std::vector<int> matchTrees(TreeWrapper<T>& treeA, TreeWrapper<T>& treeB,
   return maxMatching.second;
 }
 
-void printMatching(const std::vector<int>& matchRes, const std::string& treeA,
-                   const std::string& treeB) {
+void printMatching(const std::vector<int>& matchRes,
+                   const std::string& treeNameA, const std::string& treeNameB,
+                   uint64_t timestampA, uint64_t timestampB) {
   if (!kDebug) return;
-  std::cout << "Maximum matching between " << treeA << " and " << treeB << ":"
-            << std::endl;
+  std::cout << "Maximum matching between " << treeNameA << "("
+            << std::to_string(timestampA) << ") and " << treeNameB << ")"
+            << std::to_string(timestampB) << "):" << std::endl;
   for (int i = 0; i < matchRes.size(); ++i) {
     std::cout << "  " << i << " -> " << matchRes[i] << std::endl;
   }

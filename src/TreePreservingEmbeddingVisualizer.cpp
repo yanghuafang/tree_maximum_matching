@@ -40,7 +40,7 @@ void visualizeTreePreservingEmbedding(const TreeWrapper<T> &tree,
   }
 
   plt::figure(figure);
-  plt::title(treeName);
+  plt::title(treeName + " at timestamp " + std::to_string(tree.timestamp));
   plt::xlabel("X-axis");
   plt::ylabel("Y-axis");
   plt::grid(true);

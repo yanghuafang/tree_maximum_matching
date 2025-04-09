@@ -19,5 +19,6 @@ template <typename T>
 std::vector<int> matchTrees(TreeWrapper<T>& treeA, TreeWrapper<T>& treeB,
                             const std::string& similarityType = "cosine");
 
-void printMatching(const std::vector<int>& matching, const std::string& treeA,
-                   const std::string& treeB);
+void printMatching(const std::vector<int>& matching,
+                   const std::string& treeNameA, const std::string& treeNameB,
+                   uint64_t timestampA = 0, uint64_t timestampB = 0);

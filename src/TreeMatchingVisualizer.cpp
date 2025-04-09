@@ -102,7 +102,7 @@ void visualizeTree(const TreeWrapper<T> &tree, const std::string &treeName,
                    const std::string &edgeColor, int figure, bool block) {
   // Create and set up the figure.
   plt::figure(figure);
-  plt::title("Tree Visualization");
+  plt::title(treeName + " at timestamp " + std::to_string(tree.timestamp));
   plt::xlabel("X-axis");
   plt::ylabel("Y-axis");
   plt::grid(true);
@@ -176,7 +176,9 @@ void visualizeTreesMatching(
     const std::string &matchLineColor, int figure, bool block) {
   // Create and set up the figure.
   plt::figure(figure);
-  plt::title("Tree Matching Visualization : " + similarityType);
+  plt::title("Tree Matching(" + similarityType + ") at timestamps(" +
+             std::to_string(treeA.timestamp) + "," +
+             std::to_string(treeB.timestamp) + ")");
   plt::xlabel("X-axis");
   plt::ylabel("Y-axis");
   plt::grid(true);

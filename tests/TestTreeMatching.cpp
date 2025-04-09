@@ -130,7 +130,8 @@ int main(int argc, char* argv[]) {
       std::chrono::duration_cast<std::chrono::microseconds>(end - start);
   std::cout << "matchTrees spent " << duration.count() << " microseconds!"
             << std::endl;
-  printMatching(cosMatchRes, "treeA", "treeB");
+  printMatching(cosMatchRes, "sortedTreeA", "sortedTreeB",
+                sortedTreeA.timestamp, sortedTreeB.timestamp);
 
   // Set parameters for edge colors and matching line color.
   std::string treeAEdgeColor = "red";
@@ -145,7 +146,8 @@ int main(int argc, char* argv[]) {
   // Euclidean match
   std::vector<int> euclideanMatchRes =
       matchTrees(sortedTreeA, sortedTreeB, "euclidean");
-  printMatching(euclideanMatchRes, "treeA", "treeB");
+  printMatching(euclideanMatchRes, "sortedTreeA", "sortedTreeB",
+                sortedTreeA.timestamp, sortedTreeB.timestamp);
 
   // Visualize the trees and their euclidean matching.
   visualizeTreesMatching(sortedTreeA, sortedTreeB, euclideanMatchRes,
