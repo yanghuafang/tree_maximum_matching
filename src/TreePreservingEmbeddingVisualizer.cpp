@@ -66,10 +66,10 @@ void visualizeTreePreservingEmbedding(const TreeWrapper<T> &tree,
     plt::scatter(xType0, yType0, 50.0, {{"color", "red"}, {"label", "Type 0"}});
   if (!xType1.empty())
     plt::scatter(xType1, yType1, 50.0,
-                 {{"color", "green"}, {"label", "Type 1"}});
+                 {{"color", "blue"}, {"label", "Type 1"}});
   if (!xType2.empty())
     plt::scatter(xType2, yType2, 50.0,
-                 {{"color", "blue"}, {"label", "Type 2"}});
+                 {{"color", "green"}, {"label", "Type 2"}});
 
   T delta = 0.1;
   std::vector<std::pair<std::pair<T, T>, int>> clusters;
