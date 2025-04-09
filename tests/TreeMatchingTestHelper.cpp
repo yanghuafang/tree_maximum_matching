@@ -60,27 +60,28 @@ void assignPositions(std::vector<TreeNode<T>>& nodes, int nodeIdx, T x, T y,
 
 // Function to generate Topology Tree A.
 template <typename T>
-std::vector<TreeNode<T>> generateTreeA(
+TreeWrapper<T> generateTreeA(
     const std::vector<std::vector<int>>& treeStructure) {
   const int numNodes = treeStructure.size();
-  std::vector<TreeNode<T>> nodes(numNodes);
+  TreeWrapper<T> tree;
+  tree.nodes.resize(numNodes);
 
   // Initialize a random number generator.
   std::random_device rd;
   std::mt19937 rng(rd());
 
   // Start with the root node (index 0) at position (0,0) and level 0.
-  assignPositions<T>(nodes, 0, 0.0, 0.0, 0, treeStructure, rng);
+  assignPositions<T>(tree.nodes, 0, 0.0, 0.0, 0, treeStructure, rng);
 
-  return nodes;
+  return tree;
 }
 
 // Generates Tree B from Tree A by applying drifts to position, offset, and
 // angle.
 template <typename T>
-std::vector<TreeNode<T>> generateTreeB(const std::vector<TreeNode<T>>& treeA) {
+TreeWrapper<T> generateTreeB(const TreeWrapper<T>& treeA) {
   // Start from Tree A structure and attributes
-  std::vector<TreeNode<T>> treeB = treeA;
+  TreeWrapper<T> treeB = treeA;
 
   // Initialize random generators for distance jitter and angle jitter.
   std::random_device rd;
@@ -92,24 +93,24 @@ std::vector<TreeNode<T>> generateTreeB(const std::vector<TreeNode<T>>& treeA) {
   const T deg2rad = M_PI / 180.0;
 
   // Process each node in treeB.
-  for (size_t i = 0; i < treeB.size(); ++i) {
+  for (size_t i = 0; i < treeB.nodes.size(); ++i) {
     // For the root node (index 0), fix the position at the origin.
     if (i == 0) {
-      treeB[i].posX = 0.0;
-      treeB[i].posY = 0.0;
-      treeB[i].offset = 0.0;
-      treeB[i].angle = 0.0;
+      treeB.nodes[i].posX = 0.0;
+      treeB.nodes[i].posY = 0.0;
+      treeB.nodes[i].offset = 0.0;
+      treeB.nodes[i].angle = 0.0;
       continue;
     }
 
     // Get the parent's original position from Tree A.
-    int parentIdx = treeA[i].parent;
-    T parentX = treeA[parentIdx].posX;
-    T parentY = treeA[parentIdx].posY;
+    int parentIdx = treeA.nodes[i].parent;
+    T parentX = treeA.nodes[parentIdx].posX;
+    T parentY = treeA.nodes[parentIdx].posY;
 
     // Get the current node's original position from Tree A.
-    T currentX = treeA[i].posX;
-    T currentY = treeA[i].posY;
+    T currentX = treeA.nodes[i].posX;
+    T currentY = treeA.nodes[i].posY;
 
     // Compute the original vector (from the parent to the current node)
     T vecX = currentX - parentX;
@@ -131,11 +132,12 @@ std::vector<TreeNode<T>> generateTreeB(const std::vector<TreeNode<T>>& treeA) {
     T newY = currentY + distanceJitter * std::sin(newAngle);
 
     // Update Tree B with the new position.
-    treeB[i].posX = newX;
-    treeB[i].posY = newY;
+    treeB.nodes[i].posX = newX;
+    treeB.nodes[i].posY = newY;
     // Recalculate the offset and angle based on the new position.
-    treeB[i].offset = std::sqrt(newX * newX + newY * newY);
-    treeB[i].angle = (treeB[i].offset == 0.0 ? 0.0 : std::atan2(newY, newX));
+    treeB.nodes[i].offset = std::sqrt(newX * newX + newY * newY);
+    treeB.nodes[i].angle =
+        (treeB.nodes[i].offset == 0.0 ? 0.0 : std::atan2(newY, newX));
   }
 
   return treeB;
@@ -147,8 +149,8 @@ template void assignPositions<float>(
     int level, const std::vector<std::vector<int>>& treeStructure,
     std::mt19937& rng);
 
-template std::vector<TreeNode<float>> generateTreeA<float>(
+template TreeWrapper<float> generateTreeA<float>(
     const std::vector<std::vector<int>>& treeStructure);
 
-template std::vector<TreeNode<float>> generateTreeB<float>(
-    const std::vector<TreeNode<float>>& treeA);
+template TreeWrapper<float> generateTreeB<float>(
+    const TreeWrapper<float>& treeA);

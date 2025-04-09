@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     };
 
     // Generate Tree A first.
-    std::vector<TreeNode<float>> treeA = generateTreeA<float>(treeStructure);
+    TreeWrapper<float> treeA = generateTreeA<float>(treeStructure);
 
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
@@ -61,14 +61,14 @@ int main(int argc, char* argv[]) {
     printTree(treeA, "treeA");
     visualizeTree(treeA, "treeA", "red", 1, block);
 
-    std::vector<TreeNode<float>> sortedTreeA;
+    TreeWrapper<float> sortedTreeA;
     std::vector<int> sortedTreeAIndices;
     sortTree(treeA, sortedTreeA, sortedTreeAIndices);
     printTree(sortedTreeA, "sortedTreeA");
     visualizeTree(sortedTreeA, "sortedTreeA", "red", 2, block);
 
     // Generate Tree B by adding drifts.
-    std::vector<TreeNode<float>> treeB = generateTreeB<float>(treeA);
+    TreeWrapper<float> treeB = generateTreeB<float>(treeA);
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
     if (rotate) {
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
     printTree(treeB, "treeB");
     visualizeTree(treeB, "treeB", "blue", 3, block);
 
-    std::vector<TreeNode<float>> sortedTreeB;
+    TreeWrapper<float> sortedTreeB;
     std::vector<int> sortedTreeBIndices;
     sortTree(treeB, sortedTreeB, sortedTreeBIndices);
     printTree(sortedTreeB, "sortedTreeB");
@@ -97,15 +97,14 @@ int main(int argc, char* argv[]) {
     // Display treeB TPE.
     visualizeTreePreservingEmbedding(sortedTreeB, "sortedTreeB", 6, block);
   } else {
-    TreeWrapper<float> treeWrapper;
-    if (!loadTreeFromJson(treeWrapper, treeJson)) {
+    TreeWrapper<float> tree;
+    if (!loadTreeFromJson(tree, treeJson)) {
       std::cerr << "Failed to load tree from json file " << treeJson
                 << std::endl;
       return -2;
     }
 
-    std::vector<TreeNode<float>> tree = treeWrapper.tree;
-    std::cout << "Succeed to load tree of timestamp " << treeWrapper.timestamp
+    std::cout << "Succeed to load tree of timestamp " << tree.timestamp
               << " from json file " << treeJson << std::endl;
 
     // Convert point from vehicle coordinate system(x->forward, y->left) to
@@ -116,7 +115,7 @@ int main(int argc, char* argv[]) {
     printTree(tree, "tree");
     visualizeTree(tree, "tree", "red", 1, block);
 
-    std::vector<TreeNode<float>> sortedTree;
+    TreeWrapper<float> sortedTree;
     std::vector<int> sortedTreeIndices;
     sortTree(tree, sortedTree, sortedTreeIndices);
     printTree(sortedTree, "sortedTree");

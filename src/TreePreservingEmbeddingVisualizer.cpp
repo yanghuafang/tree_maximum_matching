@@ -17,7 +17,7 @@ namespace plt = matplotlibcpp;
 //   6. Edges are drawn between each node and its parent with color according to
 //   edge level.
 template <typename T>
-void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
+void visualizeTreePreservingEmbedding(const TreeWrapper<T> &tree,
                                       const std::string &treeName, int figure,
                                       bool block) {
   // Separate points by node type.
@@ -25,8 +25,8 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
   std::vector<T> xType1, yType1;
   std::vector<T> xType2, yType2;
 
-  for (size_t i = 0; i < tree.size(); ++i) {
-    const auto &node = tree[i];
+  for (size_t i = 0; i < tree.nodes.size(); ++i) {
+    const auto &node = tree.nodes[i];
     if (node.type == 0) {
       xType0.push_back(node.tpeX);
       yType0.push_back(node.tpeY);
@@ -48,10 +48,10 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
   // First, plot edges.
   // For each node (except the root), draw a line from origin (0,0) to its
   // own (x,y).
-  for (size_t i = 0; i < tree.size(); i++) {
-    if (tree[i].parent != -1) {
-      T childX = tree[i].tpeX;
-      T childY = tree[i].tpeY;
+  for (size_t i = 0; i < tree.nodes.size(); i++) {
+    if (tree.nodes[i].parent != -1) {
+      T childX = tree.nodes[i].tpeX;
+      T childY = tree.nodes[i].tpeY;
 
       std::string eColor = "gray";
 
@@ -73,9 +73,9 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
 
   T delta = 0.1;
   std::vector<std::pair<std::pair<T, T>, int>> clusters;
-  for (size_t i = 0; i < tree.size(); i++) {
-    T posX = tree[i].posX;
-    T posY = tree[i].posY;
+  for (size_t i = 0; i < tree.nodes.size(); i++) {
+    T posX = tree.nodes[i].posX;
+    T posY = tree.nodes[i].posY;
 
     bool foundOverlap = false;
     int overlapNum = 0;
@@ -96,7 +96,7 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
 
     // Annotate each node with its index.
     T xOffset = 0.2;
-    plt::text(tree[i].tpeX - xOffset * overlapNum, tree[i].tpeY,
+    plt::text(tree.nodes[i].tpeX - xOffset * overlapNum, tree.nodes[i].tpeY,
               "`" + std::to_string(i));
   }
 
@@ -119,5 +119,5 @@ void visualizeTreePreservingEmbedding(const std::vector<TreeNode<T>> &tree,
 
 // Explicit instantiations for type to use.
 template void visualizeTreePreservingEmbedding<float>(
-    const std::vector<TreeNode<float>> &tree, const std::string &treeName,
-    int figure, bool block);
+    const TreeWrapper<float> &tree, const std::string &treeName, int figure,
+    bool block);

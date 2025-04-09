@@ -30,23 +30,22 @@ void from_json(const json& j, TreeNode<T>& node) {
 //------------------------------------------------------------------------------
 // JSON conversion functions for TreeWrapper<T>
 template <typename T>
-void to_json(json& j, const TreeWrapper<T>& wrapper) {
-  j = json{{"timestamp", wrapper.timestamp}, {"tree", wrapper.tree}};
+void to_json(json& j, const TreeWrapper<T>& tree) {
+  j = json{{"timestamp", tree.timestamp}, {"nodes", tree.nodes}};
 }
 
 template <typename T>
-void from_json(const json& j, TreeWrapper<T>& wrapper) {
-  j.at("timestamp").get_to(wrapper.timestamp);
-  j.at("tree").get_to(wrapper.tree);
+void from_json(const json& j, TreeWrapper<T>& tree) {
+  j.at("timestamp").get_to(tree.timestamp);
+  j.at("nodes").get_to(tree.nodes);
 }
 
 //------------------------------------------------------------------------------
 // Save a single tree (wrapped in TreeWrapper) to a JSON file.
 template <typename T>
-bool saveTreeToJson(const TreeWrapper<T>& treeWrapper,
-                    const std::string& filename) {
+bool saveTreeToJson(const TreeWrapper<T>& tree, const std::string& filename) {
   try {
-    json j = treeWrapper;  // Automatically converts TreeWrapper<T> to JSON.
+    json j = tree;  // Automatically converts TreeWrapper<T> to JSON.
 
     std::ofstream outFile(filename);
     if (!outFile) return false;
@@ -61,8 +60,7 @@ bool saveTreeToJson(const TreeWrapper<T>& treeWrapper,
 //------------------------------------------------------------------------------
 // Load a single tree (wrapped in TreeWrapper) from a JSON file.
 template <typename T>
-bool loadTreeFromJson(TreeWrapper<T>& treeWrapper,
-                      const std::string& filename) {
+bool loadTreeFromJson(TreeWrapper<T>& tree, const std::string& filename) {
   try {
     std::ifstream inFile(filename);
     if (!inFile) return false;
@@ -71,7 +69,7 @@ bool loadTreeFromJson(TreeWrapper<T>& treeWrapper,
     inFile >> j;
 
     // Assume the file contains a JSON object representing a TreeWrapper.
-    treeWrapper = j.get<TreeWrapper<T>>();
+    tree = j.get<TreeWrapper<T>>();
     return true;  // Success
   } catch (...) {
     return false;  // Failure
@@ -86,8 +84,8 @@ bool saveTreesToJson(const std::list<TreeWrapper<T>>& trees,
   try {
     json j;
     j["trees"] = json::array();
-    for (const auto& treeWrapper : trees) {
-      j["trees"].push_back(treeWrapper);  // Convert each TreeWrapper to JSON.
+    for (const auto& tree : trees) {
+      j["trees"].push_back(tree);  // Convert each TreeWrapper to JSON.
     }
 
     std::ofstream outFile(filename);
@@ -115,8 +113,8 @@ bool loadTreesFromJson(std::list<TreeWrapper<T>>& trees,
     trees.clear();  // Clear the list before loading.
     if (j.contains("trees") && j["trees"].is_array()) {
       for (const auto& treeJson : j["trees"]) {
-        TreeWrapper<T> treeWrapper = treeJson.get<TreeWrapper<T>>();
-        trees.push_back(treeWrapper);
+        TreeWrapper<T> tree = treeJson.get<TreeWrapper<T>>();
+        trees.push_back(tree);
       }
       return true;  // Success
     }
@@ -128,9 +126,9 @@ bool loadTreesFromJson(std::list<TreeWrapper<T>>& trees,
 
 //------------------------------------------------------------------------------
 // Explicit instantiations for type float.
-template bool saveTreeToJson<float>(const TreeWrapper<float>& treeWrapper,
+template bool saveTreeToJson<float>(const TreeWrapper<float>& tree,
                                     const std::string& filename);
-template bool loadTreeFromJson<float>(TreeWrapper<float>& treeWrapper,
+template bool loadTreeFromJson<float>(TreeWrapper<float>& tree,
                                       const std::string& filename);
 template bool saveTreesToJson<float>(const std::list<TreeWrapper<float>>& trees,
                                      const std::string& filename);

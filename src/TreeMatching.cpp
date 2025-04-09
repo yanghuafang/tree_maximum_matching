@@ -11,8 +11,8 @@
 #include "TreePreservingEmbedding.hpp"
 
 template <typename T>
-void clockwiseRotate90Degrees(std::vector<TreeNode<T>>& tree) {
-  std::for_each(tree.begin(), tree.end(), [&tree](TreeNode<T>& node) {
+void clockwiseRotate90Degrees(TreeWrapper<T>& tree) {
+  std::for_each(tree.nodes.begin(), tree.nodes.end(), [](TreeNode<T>& node) {
     T x = node.posX;
     T y = node.posY;
     node.posX = -y;
@@ -46,21 +46,21 @@ T computeAngle(T x1, T y1, T x2, T y2) {
  * vector (oldToNew) mapping each original index to its new index in sortedTree.
  */
 template <typename T>
-void sortTree(const std::vector<TreeNode<T>>& tree,
-              std::vector<TreeNode<T>>& sortedTree,
+void sortTree(const TreeWrapper<T>& tree, TreeWrapper<T>& sortedTree,
               std::vector<int>& sortedIndices) {
-  sortedTree.clear();
+  sortedTree.timestamp = tree.timestamp;
+  sortedTree.nodes.clear();
   sortedIndices.clear();
-  if (tree.empty()) return;
+  if (tree.nodes.empty()) return;
 
   // This vector maps an original node index to its new index in sortedTree.
-  std::vector<int> oldToNew(tree.size(), -1);
+  std::vector<int> oldToNew(tree.nodes.size(), -1);
 
   // Process the root separately.
-  TreeNode<T> newRoot = tree[0];
+  TreeNode<T> newRoot = tree.nodes[0];
   newRoot.parent = -1;       // root's parent is set to -1.
   newRoot.children.clear();  // children will be populated later.
-  sortedTree.push_back(newRoot);
+  sortedTree.nodes.push_back(newRoot);
   sortedIndices.push_back(0);
   oldToNew[0] = 0;
 
@@ -73,7 +73,7 @@ void sortTree(const std::vector<TreeNode<T>>& tree,
     int curIdx = q.front();
     q.pop();
 
-    const TreeNode<T>& curNode = tree[curIdx];
+    const TreeNode<T>& curNode = tree.nodes[curIdx];
     int numChildren = curNode.children.size();
     if (numChildren == 0) continue;
 
@@ -82,7 +82,7 @@ void sortTree(const std::vector<TreeNode<T>>& tree,
     std::vector<std::pair<int, float>> children;
     for (int i = 0; i < numChildren; ++i) {
       int childIdx = curNode.children[i];
-      const TreeNode<T>& childNode = tree[childIdx];
+      const TreeNode<T>& childNode = tree.nodes[childIdx];
       T angle = computeAngle(curNode.posX, curNode.posY, childNode.posX,
                              childNode.posY);
       children.push_back(std::make_pair(childIdx, angle));
@@ -106,35 +106,36 @@ void sortTree(const std::vector<TreeNode<T>>& tree,
     // Update sortedTree and sortedIndices.
     for (const std::pair<int, float>& childPair : children) {
       int childIdx = childPair.first;
-      TreeNode<T> newChild = tree[childIdx];
+      TreeNode<T> newChild = tree.nodes[childIdx];
 
       // Update the parent to the parent's new index.
       newChild.parent = curNewIdx;
       newChild.children.clear();  // Will add its children indices later.
 
       // The new node's index is the current size of sortedTree.
-      int childNewIdx = static_cast<int>(sortedTree.size());
-      sortedTree.push_back(newChild);
+      int childNewIdx = static_cast<int>(sortedTree.nodes.size());
+      sortedTree.nodes.push_back(newChild);
       sortedIndices.push_back(childIdx);
       oldToNew[childIdx] = childNewIdx;
 
       // Append the new child index to children vector.
-      sortedTree[curNewIdx].children.push_back(childNewIdx);
+      sortedTree.nodes[curNewIdx].children.push_back(childNewIdx);
     }
   }
 }
 
 template <typename T>
-void printTree(const std::vector<TreeNode<T>>& tree,
-               const std::string& treeName) {
+void printTree(const TreeWrapper<T>& tree, const std::string& treeName) {
   if (!kDebug) return;
-  std::cout << "Tree: " << treeName << std::endl;
-  for (size_t i = 0; i < tree.size(); ++i) {
-    std::cout << "  Node " << i << ": pos=(" << tree[i].posX << ", "
-              << tree[i].posY << ")"
-              << ", offset=" << tree[i].offset << ", angle=" << tree[i].angle
-              << ", type=" << tree[i].type << ", parent=" << tree[i].parent
-              << std::endl;
+  std::cout << "Tree: " << treeName << " Timestamp: " << tree.timestamp
+            << std::endl;
+  for (size_t i = 0; i < tree.nodes.size(); ++i) {
+    std::cout << "  Node " << i << ": pos=(" << tree.nodes[i].posX << ", "
+              << tree.nodes[i].posY << ")"
+              << ", offset=" << tree.nodes[i].offset
+              << ", angle=" << tree.nodes[i].angle
+              << ", type=" << tree.nodes[i].type
+              << ", parent=" << tree.nodes[i].parent << std::endl;
   }
 }
 
@@ -146,8 +147,7 @@ void printTree(const std::vector<TreeNode<T>>& tree,
 //  sin(angle), cos(angle),
 //  one-hot encoding for type (3 dimensions)]
 template <typename T>
-std::vector<std::vector<T>> generateFeatureVectors(
-    const std::vector<TreeNode<T>>& tree) {
+std::vector<std::vector<T>> generateFeatureVectors(const TreeWrapper<T>& tree) {
   // Determine normalization parameters for tpeRadius.
   T tpeRadiusMin = std::numeric_limits<T>::max();
   T tpeRadiusMax = std::numeric_limits<T>::lowest();
@@ -158,7 +158,7 @@ std::vector<std::vector<T>> generateFeatureVectors(
   T posYMax = std::numeric_limits<T>::lowest();
   T offsetMax = 0.0;
 
-  for (const auto& node : tree) {
+  for (const auto& node : tree.nodes) {
     if (node.tpeRadius < tpeRadiusMin) tpeRadiusMin = node.tpeRadius;
     if (node.tpeRadius > tpeRadiusMax) tpeRadiusMax = node.tpeRadius;
 
@@ -171,12 +171,12 @@ std::vector<std::vector<T>> generateFeatureVectors(
 
   // Allocate a vector to hold the final feature vectors.
   std::vector<std::vector<T>> finalFeatures;
-  finalFeatures.reserve(tree.size());
+  finalFeatures.reserve(tree.nodes.size());
 
   // For each node compute the final feature vector.
   // The order is: [TPE_x, TPE_y, norm_posX, norm_posY, norm_offset, sin(angle),
   // cos(angle), one-hot type]
-  for (const auto& node : tree) {
+  for (const auto& node : tree.nodes) {
     std::vector<T> featureVector;
 
     // Append precomputed TPE embedding.
@@ -340,8 +340,7 @@ void printCostMatrix(const std::vector<std::vector<T>>& costMatrix,
 }
 
 template <typename T>
-std::vector<int> matchTrees(std::vector<TreeNode<T>>& treeA,
-                            std::vector<TreeNode<T>>& treeB,
+std::vector<int> matchTrees(TreeWrapper<T>& treeA, TreeWrapper<T>& treeB,
                             const std::string& similarityType) {
   // Generate TPE of treeA.
   generateTreePreservingEmbedding(treeA);
@@ -410,20 +409,19 @@ void printMatching(const std::vector<int>& matchRes, const std::string& treeA,
 
 // Explicit instantiations for type to use.
 
-template void clockwiseRotate90Degrees<float>(
-    std::vector<TreeNode<float>>& tree);
+template void clockwiseRotate90Degrees<float>(TreeWrapper<float>& tree);
 
 template float computeAngle<float>(float x1, float y1, float x2, float y2);
 
-template void sortTree<float>(const std::vector<TreeNode<float>>& tree,
-                              std::vector<TreeNode<float>>& sortedTree,
+template void sortTree<float>(const TreeWrapper<float>& tree,
+                              TreeWrapper<float>& sortedTree,
                               std::vector<int>& sortedIndices);
 
-template void printTree<float>(const std::vector<TreeNode<float>>& tree,
+template void printTree<float>(const TreeWrapper<float>& tree,
                                const std::string& treeName);
 
-template std::vector<std::vector<float>> generateFeatureVectors(
-    const std::vector<TreeNode<float>>& tree);
+template std::vector<std::vector<float>> generateFeatureVectors<float>(
+    const TreeWrapper<float>& tree);
 
 template void printFeatureVectors<float>(
     const std::vector<std::vector<float>>& featureVectors,
@@ -451,6 +449,6 @@ template void printCostMatrix<float>(
     const std::vector<std::vector<float>>& costMatrix,
     const std::string& costType);
 
-template std::vector<int> matchTrees<float>(std::vector<TreeNode<float>>& treeA,
-                                            std::vector<TreeNode<float>>& treeB,
+template std::vector<int> matchTrees<float>(TreeWrapper<float>& treeA,
+                                            TreeWrapper<float>& treeB,
                                             const std::string& similarityType);

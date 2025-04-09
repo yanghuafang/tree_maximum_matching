@@ -19,15 +19,15 @@ namespace plt = matplotlibcpp;
 //   labels.
 //   edgeColor    : Color used to draw the tree's edges.
 template <typename T>
-void renderTree(const std::vector<TreeNode<T>> &tree,
-                const std::string &treeName, const std::string &edgeColor) {
+void renderTree(const TreeWrapper<T> &tree, const std::string &treeName,
+                const std::string &edgeColor) {
   // Draw edges from each node to its parent (if not a root)
-  for (size_t i = 0; i < tree.size(); ++i) {
-    if (tree[i].parent != -1) {
-      T parentX = tree[tree[i].parent].posX;
-      T parentY = tree[tree[i].parent].posY;
-      T childX = tree[i].posX;
-      T childY = tree[i].posY;
+  for (size_t i = 0; i < tree.nodes.size(); ++i) {
+    if (tree.nodes[i].parent != -1) {
+      T parentX = tree.nodes[tree.nodes[i].parent].posX;
+      T parentY = tree.nodes[tree.nodes[i].parent].posY;
+      T childX = tree.nodes[i].posX;
+      T childY = tree.nodes[i].posY;
       std::vector<T> xEdge{parentX, childX};
       std::vector<T> yEdge{parentY, childY};
       plt::plot(xEdge, yEdge, {{"color", edgeColor}});
@@ -41,16 +41,16 @@ void renderTree(const std::vector<TreeNode<T>> &tree,
 
   T delta = 0.1;
   std::vector<std::pair<std::pair<T, T>, int>> clusters;
-  for (size_t i = 0; i < tree.size(); ++i) {
-    T xVal = tree[i].posX;
-    T yVal = tree[i].posY;
-    if (tree[i].type == 0) {
+  for (size_t i = 0; i < tree.nodes.size(); ++i) {
+    T xVal = tree.nodes[i].posX;
+    T yVal = tree.nodes[i].posY;
+    if (tree.nodes[i].type == 0) {
       xType0.push_back(xVal);
       yType0.push_back(yVal);
-    } else if (tree[i].type == 1) {
+    } else if (tree.nodes[i].type == 1) {
       xType1.push_back(xVal);
       yType1.push_back(yVal);
-    } else if (tree[i].type == 2) {
+    } else if (tree.nodes[i].type == 2) {
       xType2.push_back(xVal);
       yType2.push_back(yVal);
     }
@@ -98,9 +98,8 @@ void renderTree(const std::vector<TreeNode<T>> &tree,
 //   labels.
 //   edgeColor    : Color used to draw the tree's edges.
 template <typename T>
-void visualizeTree(const std::vector<TreeNode<T>> &tree,
-                   const std::string &treeName, const std::string &edgeColor,
-                   int figure, bool block) {
+void visualizeTree(const TreeWrapper<T> &tree, const std::string &treeName,
+                   const std::string &edgeColor, int figure, bool block) {
   // Create and set up the figure.
   plt::figure(figure);
   plt::title("Tree Visualization");
@@ -136,17 +135,17 @@ void visualizeTree(const std::vector<TreeNode<T>> &tree,
 //   matchLineColor: The color used for drawing matching
 //   lines (as dashed lines).
 template <typename T>
-void renderMatching(const std::vector<TreeNode<T>> &treeA,
-                    const std::vector<TreeNode<T>> &treeB,
+void renderMatching(const TreeWrapper<T> &treeA, const TreeWrapper<T> &treeB,
                     const std::vector<int> &matchRes,
                     const std::string &matchLineColor) {
   for (size_t i = 0; i < matchRes.size(); ++i) {
     int matchedIndex = matchRes[i];
-    if (matchedIndex >= 0 && static_cast<size_t>(matchedIndex) < treeB.size()) {
-      T xA = treeA[i].posX;
-      T yA = treeA[i].posY;
-      T xB = treeB[matchedIndex].posX;
-      T yB = treeB[matchedIndex].posY;
+    if (matchedIndex >= 0 &&
+        static_cast<size_t>(matchedIndex) < treeB.nodes.size()) {
+      T xA = treeA.nodes[i].posX;
+      T yA = treeA.nodes[i].posY;
+      T xB = treeB.nodes[matchedIndex].posX;
+      T yB = treeB.nodes[matchedIndex].posY;
       std::vector<T> xMatch{xA, xB};
       std::vector<T> yMatch{yA, yB};
       plt::plot(xMatch, yMatch,
@@ -170,14 +169,11 @@ void renderMatching(const std::vector<TreeNode<T>> &treeA,
 //   Edge color for treeB.
 //   matchLineColor : Color for the dashed matching lines.
 template <typename T>
-void visualizeTreesMatching(const std::vector<TreeNode<T>> &treeA,
-                            const std::vector<TreeNode<T>> &treeB,
-                            const std::vector<int> &matchRes,
-                            const std::string &similarityType,
-                            const std::string &treeAEdgeColor,
-                            const std::string &treeBEdgeColor,
-                            const std::string &matchLineColor, int figure,
-                            bool block) {
+void visualizeTreesMatching(
+    const TreeWrapper<T> &treeA, const TreeWrapper<T> &treeB,
+    const std::vector<int> &matchRes, const std::string &similarityType,
+    const std::string &treeAEdgeColor, const std::string &treeBEdgeColor,
+    const std::string &matchLineColor, int figure, bool block) {
   // Create and set up the figure.
   plt::figure(figure);
   plt::title("Tree Matching Visualization : " + similarityType);
@@ -210,23 +206,22 @@ void visualizeTreesMatching(const std::vector<TreeNode<T>> &treeA,
 void pltShow() { plt::show(); }
 
 // Explicit instantiations for type to use.
-template void renderTree<float>(const std::vector<TreeNode<float>> &tree,
+template void renderTree<float>(const TreeWrapper<float> &tree,
                                 const std::string &treeName,
                                 const std::string &edgeColor);
 
-template void visualizeTree<float>(const std::vector<TreeNode<float>> &tree,
+template void visualizeTree<float>(const TreeWrapper<float> &tree,
                                    const std::string &treeName,
                                    const std::string &edgeColor, int figure,
                                    bool block);
 
-template void renderMatching<float>(const std::vector<TreeNode<float>> &treeA,
-                                    const std::vector<TreeNode<float>> &treeB,
+template void renderMatching<float>(const TreeWrapper<float> &treeA,
+                                    const TreeWrapper<float> &treeB,
                                     const std::vector<int> &matchRes,
                                     const std::string &matchLineColor);
 
 template void visualizeTreesMatching<float>(
-    const std::vector<TreeNode<float>> &treeA,
-    const std::vector<TreeNode<float>> &treeB, const std::vector<int> &matchRes,
-    const std::string &similarityType, const std::string &treeAEdgeColor,
-    const std::string &treeBEdgeColor, const std::string &matchLineColor,
-    int figure1, bool block);
+    const TreeWrapper<float> &treeA, const TreeWrapper<float> &treeB,
+    const std::vector<int> &matchRes, const std::string &similarityType,
+    const std::string &treeAEdgeColor, const std::string &treeBEdgeColor,
+    const std::string &matchLineColor, int figure1, bool block);

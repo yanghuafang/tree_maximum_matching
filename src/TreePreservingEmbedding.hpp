@@ -5,11 +5,11 @@
 #include "TreeNode.hpp"
 
 template <typename T>
-int getTreeNodeLevel(const std::vector<TreeNode<T>>& tree, int index);
+int getTreeNodeLevel(const TreeWrapper<T>& tree, int index);
 
 template <typename T>
-void generateTreePreservingEmbedding(std::vector<TreeNode<T>>& tree);
+void generateTreePreservingEmbedding(TreeWrapper<T>& tree);
 
 template <typename T>
-void printTreePreservingEmbedding(const std::vector<TreeNode<T>>& tree,
+void printTreePreservingEmbedding(const TreeWrapper<T>& tree,
                                   const std::string& treeName);

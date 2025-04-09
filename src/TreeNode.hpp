@@ -29,8 +29,11 @@ struct TreeNode {
 // Define TreeWrapper struct that encapsulates a timestamp and tree nodes.
 template <typename T>
 struct TreeWrapper {
-  uint64_t timestamp;
-  std::vector<TreeNode<T>> tree;
+  // meta info.
+  uint64_t timestamp = 0;
+
+  // tree data.
+  std::vector<TreeNode<T>> nodes;
 };
 
 // Toggle for debugging info output.

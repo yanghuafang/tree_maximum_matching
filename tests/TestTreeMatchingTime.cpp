@@ -53,39 +53,30 @@ int main(int argc, char* argv[]) {
   std::string trees2json = parser.get<std::string>("--trees2");
   std::string similarity = parser.get<std::string>("--similarity");
 
-  std::list<std::vector<TreeNode<float>>> treesA;
-  std::list<std::vector<TreeNode<float>>> treesB;
-
-  std::list<TreeWrapper<float>> treesWrapperA;
-  if (!loadTreesFromJson(treesWrapperA, trees1json)) {
+  std::list<TreeWrapper<float>> treesA;
+  if (!loadTreesFromJson(treesA, trees1json)) {
     std::cerr << "Failed to load trees1 from json file " << trees1json
               << std::endl;
     return -2;
   }
 
-  if (!treesWrapperA.empty()) {
-    for (const TreeWrapper<float>& treeWrapper : treesWrapperA) {
-      treesA.push_back(treeWrapper.tree);
-    }
+  if (!treesA.empty()) {
     std::cout << "Succeed to load treesA of timestamp "
-              << treesWrapperA.front().timestamp << " from json file "
-              << trees1json << std::endl;
+              << treesA.front().timestamp << " from json file " << trees1json
+              << std::endl;
   }
 
-  std::list<TreeWrapper<float>> treesWrapperB;
-  if (!loadTreesFromJson(treesWrapperB, trees2json)) {
+  std::list<TreeWrapper<float>> treesB;
+  if (!loadTreesFromJson(treesB, trees2json)) {
     std::cerr << "Failed to load trees2 from json file " << trees2json
               << std::endl;
     return -3;
   }
 
-  if (!treesWrapperB.empty()) {
-    for (const TreeWrapper<float>& treeWrapper : treesWrapperB) {
-      treesB.push_back(treeWrapper.tree);
-    }
+  if (!treesB.empty()) {
     std::cout << "Succeed to load treesB of timestamp "
-              << treesWrapperB.front().timestamp << " from json file "
-              << trees2json << std::endl;
+              << treesB.front().timestamp << " from json file " << trees2json
+              << std::endl;
   }
 
   int size = 0;
@@ -98,8 +89,8 @@ int main(int argc, char* argv[]) {
   }
 
   std::list<float> timeOfFrames;
-  std::list<std::vector<TreeNode<float>>>::iterator treesAIter = treesA.begin();
-  std::list<std::vector<TreeNode<float>>>::iterator treesBIter = treesB.begin();
+  std::list<TreeWrapper<float>>::iterator treesAIter = treesA.begin();
+  std::list<TreeWrapper<float>>::iterator treesBIter = treesB.begin();
 
   // Set parameters for edge colors and matching line color.
   std::string treeAEdgeColor = "red";
@@ -109,19 +100,19 @@ int main(int argc, char* argv[]) {
   // Cosine match
   while (similarity == "cosine" && treesAIter != treesA.end() &&
          treesBIter != treesB.end()) {
-    std::vector<TreeNode<float>>& treeA = *treesAIter;
-    std::vector<TreeNode<float>>& treeB = *treesBIter;
+    TreeWrapper<float>& treeA = *treesAIter;
+    TreeWrapper<float>& treeB = *treesBIter;
     ++treesAIter;
     ++treesBIter;
 
-    std::vector<TreeNode<float>> sortedTreeA;
+    TreeWrapper<float> sortedTreeA;
     std::vector<int> sortedTreeAIndices;
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
     clockwiseRotate90Degrees(treeA);
     sortTree(treeA, sortedTreeA, sortedTreeAIndices);
 
-    std::vector<TreeNode<float>> sortedTreeB;
+    TreeWrapper<float> sortedTreeB;
     std::vector<int> sortedTreeBIndices;
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
@@ -154,19 +145,19 @@ int main(int argc, char* argv[]) {
   // Euclidean match
   while (similarity == "euclidean" && treesAIter != treesA.end() &&
          treesBIter != treesB.end()) {
-    std::vector<TreeNode<float>>& treeA = *treesAIter;
-    std::vector<TreeNode<float>>& treeB = *treesBIter;
+    TreeWrapper<float>& treeA = *treesAIter;
+    TreeWrapper<float>& treeB = *treesBIter;
     ++treesAIter;
     ++treesBIter;
 
-    std::vector<TreeNode<float>> sortedTreeA;
+    TreeWrapper<float> sortedTreeA;
     std::vector<int> sortedTreeAIndices;
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
     clockwiseRotate90Degrees(treeA);
     sortTree(treeA, sortedTreeA, sortedTreeAIndices);
 
-    std::vector<TreeNode<float>> sortedTreeB;
+    TreeWrapper<float> sortedTreeB;
     std::vector<int> sortedTreeBIndices;
     // Convert point from vehicle coordinate system(x->forward, y->left) to
     // nomal coordinate system(x->right, y->forward).
