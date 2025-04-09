@@ -155,13 +155,15 @@ int main(int argc, char* argv[]) {
   // Save tree1 and tree2.
   std::string outputTree1json = parser.get<std::string>("--output-tree1");
   std::string outputTree2json = parser.get<std::string>("--output-tree2");
-  if (!outputTree1json.empty() && !outputTree2json.empty()) {
+  if (!outputTree1json.empty()) {
     if (!saveTreeToJson(sortedTreeA, outputTree1json)) {
       std::cerr << "Failed to save tree1 to json file " << outputTree1json
                 << std::endl;
       return -4;
     }
+  }
 
+  if (!outputTree2json.empty()) {
     if (!saveTreeToJson(sortedTreeB, outputTree2json)) {
       std::cerr << "Failed to save tree2 to json file " << outputTree2json
                 << std::endl;

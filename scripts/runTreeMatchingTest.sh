@@ -9,4 +9,6 @@ elif [ $# -eq 3 ]; then
     ./TreeMatchingTest "$1" "$2" "$3"
 elif [ $# -eq 4 ]; then
     ./TreeMatchingTest "$1" "$2" "$3" "$4"
+elif [ $# -eq 5 ]; then
+    ./TreeMatchingTest "$1" "$2" "$3" "$4" "$5"
 fi
